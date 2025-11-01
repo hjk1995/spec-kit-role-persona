@@ -808,13 +808,18 @@ def clone_from_main_branch(repo_owner: str, repo_name: str, ai_assistant: str, d
             if verbose:
                 console.print(f"[cyan]Extracted to:[/cyan] {extracted_path}")
             
-            # Return metadata similar to release download
+            # Calculate directory size for metadata
+            total_size = sum(f.stat().st_size for f in extracted_path.rglob('*') if f.is_file())
+            
+            # Return metadata compatible with release download format
             metadata = {
+                "filename": f"{repo_name}-main",
+                "size": total_size,
+                "release": "main-branch",
+                "asset_url": repo_url,
                 "source": "git-clone",
                 "branch": "main",
-                "repo": f"{repo_owner}/{repo_name}",
-                "ai_assistant": ai_assistant,
-                "script_type": script_type
+                "repo": f"{repo_owner}/{repo_name}"
             }
             
             return extracted_path, metadata
@@ -956,8 +961,11 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
 
     if tracker:
         tracker.start("fetch", "contacting GitHub API")
+    
+    # Check if we got a cloned directory or a zip file
+    is_cloned = False
     try:
-        zip_path, meta = download_template_from_github(
+        result = download_template_from_github(
             ai_assistant,
             current_dir,
             script_type=script_type,
@@ -967,10 +975,20 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
             debug=debug,
             github_token=github_token
         )
+        
+        # Check if result is a tuple with Path and metadata
+        if isinstance(result, tuple) and len(result) == 2:
+            path_or_zip, meta = result
+            # Check if it's a cloned directory (from git) or a zip file
+            is_cloned = meta.get('source') == 'git-clone'
+        else:
+            raise ValueError("Unexpected return format from download_template_from_github")
+            
         if tracker:
             tracker.complete("fetch", f"release {meta['release']} ({meta['size']:,} bytes)")
-            tracker.add("download", "Download template")
-            tracker.complete("download", meta['filename'])
+            if not is_cloned:
+                tracker.add("download", "Download template")
+                tracker.complete("download", meta['filename'])
     except Exception as e:
         if tracker:
             tracker.error("fetch", str(e))
@@ -979,6 +997,64 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                 console.print(f"[red]Error downloading template:[/red] {e}")
         raise
 
+    # If cloned from git, copy files directly instead of extracting zip
+    if is_cloned:
+        if tracker:
+            tracker.add("extract", "Copy cloned files")
+            tracker.start("extract")
+        elif verbose:
+            console.print("Copying cloned files...")
+        
+        try:
+            if not is_current_dir:
+                project_path.mkdir(parents=True, exist_ok=True)
+            
+            # Copy files from cloned directory to project path
+            source_dir = path_or_zip
+            for item in source_dir.iterdir():
+                dest_path = project_path / item.name
+                if item.is_dir():
+                    if dest_path.exists():
+                        shutil.rmtree(dest_path)
+                    shutil.copytree(item, dest_path)
+                else:
+                    shutil.copy2(item, dest_path)
+            
+            if tracker:
+                file_count = len(list(source_dir.iterdir()))
+                tracker.complete("extract", f"{file_count} items copied")
+            elif verbose:
+                console.print(f"[green]✓[/green] Files copied successfully")
+            
+            # Cleanup cloned directory
+            if tracker:
+                tracker.add("cleanup", "Cleanup")
+                tracker.start("cleanup")
+            
+            try:
+                shutil.rmtree(source_dir)
+                if tracker:
+                    tracker.complete("cleanup", "cloned directory removed")
+                elif verbose:
+                    console.print("[green]✓[/green] Cleanup complete")
+            except Exception as cleanup_error:
+                if tracker:
+                    tracker.error("cleanup", str(cleanup_error))
+                elif verbose:
+                    console.print(f"[yellow]Warning: cleanup failed: {cleanup_error}[/yellow]")
+            
+            return project_path
+            
+        except Exception as e:
+            if tracker:
+                tracker.error("extract", str(e))
+            else:
+                if verbose:
+                    console.print(f"[red]Error copying files:[/red] {e}")
+            raise
+    
+    # Original zip extraction logic
+    zip_path = path_or_zip
     if tracker:
         tracker.add("extract", "Extract template")
         tracker.start("extract")

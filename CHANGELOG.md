@@ -56,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - CLI now clones directly from the repository when releases are not found (404 error)
   - Useful for development and forked repositories without published releases
   - Maintains same functionality as release-based downloads
+  - Fixed metadata compatibility to ensure cloned repositories work with existing extraction logic
+  - Added separate file copying logic for git-cloned repositories vs zip extraction
 
 ### Documentation
 
