@@ -759,6 +759,75 @@ def merge_json_files(existing_path: Path, new_content: dict, verbose: bool = Fal
 
     return merged
 
+def clone_from_main_branch(repo_owner: str, repo_name: str, ai_assistant: str, download_dir: Path, *, script_type: str = "sh", verbose: bool = True, debug: bool = False) -> Tuple[Path, dict]:
+    """
+    Clone repository from main branch when no releases are available.
+    
+    Args:
+        repo_owner: GitHub repository owner
+        repo_name: GitHub repository name
+        ai_assistant: AI assistant name
+        download_dir: Directory to download to
+        script_type: Script type (sh or ps)
+        verbose: Whether to show verbose output
+        debug: Whether to show debug output
+        
+    Returns:
+        Tuple of (extracted_path, metadata_dict)
+    """
+    import tempfile
+    
+    repo_url = f"https://github.com/{repo_owner}/{repo_name}.git"
+    
+    if verbose:
+        console.print(f"[cyan]Cloning repository:[/cyan] {repo_url}")
+    
+    # Create a temporary directory for cloning
+    with tempfile.TemporaryDirectory() as temp_clone_dir:
+        clone_path = Path(temp_clone_dir) / repo_name
+        
+        try:
+            # Clone the repository
+            result = subprocess.run(
+                ["git", "clone", "--depth", "1", "--branch", "main", repo_url, str(clone_path)],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            
+            if verbose:
+                console.print("[green]✓[/green] Repository cloned successfully")
+            
+            # Copy the cloned repository to the download directory
+            extracted_path = download_dir / f"{repo_name}-main"
+            if extracted_path.exists():
+                shutil.rmtree(extracted_path)
+            
+            shutil.copytree(clone_path, extracted_path, ignore=shutil.ignore_patterns('.git'))
+            
+            if verbose:
+                console.print(f"[cyan]Extracted to:[/cyan] {extracted_path}")
+            
+            # Return metadata similar to release download
+            metadata = {
+                "source": "git-clone",
+                "branch": "main",
+                "repo": f"{repo_owner}/{repo_name}",
+                "ai_assistant": ai_assistant,
+                "script_type": script_type
+            }
+            
+            return extracted_path, metadata
+            
+        except subprocess.CalledProcessError as e:
+            console.print(f"[red]Error cloning repository[/red]")
+            console.print(Panel(f"Git clone failed: {e.stderr}", title="Clone Error", border_style="red"))
+            raise typer.Exit(1)
+        except Exception as e:
+            console.print(f"[red]Error processing cloned repository[/red]")
+            console.print(Panel(str(e), title="Processing Error", border_style="red"))
+            raise typer.Exit(1)
+
 def download_template_from_github(ai_assistant: str, download_dir: Path, *, script_type: str = "sh", verbose: bool = True, show_progress: bool = True, client: httpx.Client = None, debug: bool = False, github_token: str = None) -> Tuple[Path, dict]:
     repo_owner = "hjk1995"
     repo_name = "spec-kit-role-persona"
@@ -777,7 +846,12 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
             headers=_github_auth_headers(github_token),
         )
         status = response.status_code
-        if status != 200:
+        if status == 404:
+            # No releases found - fall back to cloning from main branch
+            if verbose:
+                console.print("[yellow]No releases found. Cloning from main branch...[/yellow]")
+            return clone_from_main_branch(repo_owner, repo_name, ai_assistant, download_dir, script_type=script_type, verbose=verbose, debug=debug)
+        elif status != 200:
             msg = f"GitHub API returned {status} for {api_url}"
             if debug:
                 msg += f"\nResponse headers: {response.headers}\nBody (truncated 500): {response.text[:500]}"
@@ -787,6 +861,11 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
         except ValueError as je:
             raise RuntimeError(f"Failed to parse release JSON: {je}\nRaw (truncated 400): {response.text[:400]}")
     except Exception as e:
+        if "404" in str(e):
+            # No releases found - fall back to cloning from main branch
+            if verbose:
+                console.print("[yellow]No releases found. Cloning from main branch...[/yellow]")
+            return clone_from_main_branch(repo_owner, repo_name, ai_assistant, download_dir, script_type=script_type, verbose=verbose, debug=debug)
         console.print(f"[red]Error fetching release information[/red]")
         console.print(Panel(str(e), title="Fetch Error", border_style="red"))
         raise typer.Exit(1)

@@ -52,6 +52,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Changed source path from package templates to downloaded project templates directory
   - Added warning messages when persona files are not found
   - Persona files now correctly copied from `templates/personas/` to `memory/personas/`
+- **No Releases Fallback**: Added automatic fallback to clone from main branch when no GitHub releases are available
+  - CLI now clones directly from the repository when releases are not found (404 error)
+  - Useful for development and forked repositories without published releases
+  - Maintains same functionality as release-based downloads
 
 ### Documentation
 
