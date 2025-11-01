@@ -10,7 +10,7 @@
 # ]
 # ///
 """
-Specify CLI - Setup tool for Specify projects
+Specify CLI - Setup tool for Specify projects with Role Personas
 
 Usage:
     uvx specify-cli.py init <project-name>
@@ -19,9 +19,9 @@ Usage:
 
 Or install globally:
     uv tool install --from specify-cli.py specify-cli
-    specify init <project-name>
-    specify init .
-    specify init --here
+    specify-role init <project-name>
+    specify-role init .
+    specify-role init --here
 """
 
 import os
@@ -520,12 +520,12 @@ def copy_persona_files(project_path: Path, selected_personas: list, template_sou
     Args:
         project_path: Path to the project root
         selected_personas: List of selected persona IDs
-        template_source: Path to template personas directory (defaults to package templates)
+        template_source: Path to template personas directory (defaults to project templates)
     """
     # Determine source directory
     if template_source is None:
-        # Use package templates directory
-        template_source = Path(__file__).parent.parent.parent / "templates" / "personas"
+        # Use downloaded project templates directory
+        template_source = project_path / "templates" / "personas"
     
     # Create destination directory
     personas_dir = project_path / "memory" / "personas"
@@ -538,12 +538,16 @@ def copy_persona_files(project_path: Path, selected_personas: list, template_sou
         
         if source_file.exists():
             shutil.copy2(source_file, dest_file)
+        else:
+            console.print(f"[yellow]Warning: Persona file not found: {source_file}[/yellow]")
     
     # Copy README if it exists
-    readme_source = template_source.parent.parent / "memory" / "personas" / "README.md"
+    readme_source = project_path / "memory" / "personas" / "README.md"
     readme_dest = personas_dir / "README.md"
     if readme_source.exists():
         shutil.copy2(readme_source, readme_dest)
+    else:
+        console.print(f"[yellow]Warning: Persona README not found: {readme_source}[/yellow]")
 
 class BannerGroup(TyperGroup):
     """Custom group that shows banner before help."""
@@ -613,7 +617,7 @@ def check_tool(tool: str, tracker: StepTracker = None) -> bool:
         True if tool is found, False otherwise
     """
     # Special handling for Claude CLI after `claude migrate-installer`
-    # See: https://github.com/github/spec-kit/issues/123
+    # See: https://github.com/hjk1995/spec-kit-role-persona/issues/123
     # The migrate-installer command REMOVES the original executable from PATH
     # and creates an alias at ~/.claude/local/claude instead
     # This path should be prioritized over other claude executables in PATH
@@ -756,8 +760,8 @@ def merge_json_files(existing_path: Path, new_content: dict, verbose: bool = Fal
     return merged
 
 def download_template_from_github(ai_assistant: str, download_dir: Path, *, script_type: str = "sh", verbose: bool = True, show_progress: bool = True, client: httpx.Client = None, debug: bool = False, github_token: str = None) -> Tuple[Path, dict]:
-    repo_owner = "github"
-    repo_name = "spec-kit"
+    repo_owner = "hjk1995"
+    repo_name = "spec-kit-role-persona"
     if client is None:
         client = httpx.Client(verify=ssl_context)
 

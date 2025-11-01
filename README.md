@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/github/spec-kit/actions/workflows/release.yml"><img src="https://github.com/github/spec-kit/actions/workflows/release.yml/badge.svg" alt="Release"/></a>
-    <a href="https://github.com/github/spec-kit/stargazers"><img src="https://img.shields.io/github/stars/github/spec-kit?style=social" alt="GitHub stars"/></a>
-    <a href="https://github.com/github/spec-kit/blob/main/LICENSE"><img src="https://img.shields.io/github/license/github/spec-kit" alt="License"/></a>
-    <a href="https://github.github.io/spec-kit/"><img src="https://img.shields.io/badge/docs-GitHub_Pages-blue" alt="Documentation"/></a>
+    <a href="https://github.com/hjk1995/spec-kit-role-persona/actions/workflows/release.yml"><img src="https://github.com/hjk1995/spec-kit-role-persona/actions/workflows/release.yml/badge.svg" alt="Release"/></a>
+    <a href="https://github.com/hjk1995/spec-kit-role-persona/stargazers"><img src="https://img.shields.io/github/stars/hjk1995/spec-kit-role-persona?style=social" alt="GitHub stars"/></a>
+    <a href="https://github.com/hjk1995/spec-kit-role-persona/blob/main/LICENSE"><img src="https://img.shields.io/github/license/hjk1995/spec-kit-role-persona" alt="License"/></a>
+    <a href="https://hjk1995.github.io/spec-kit-role-persona/"><img src="https://img.shields.io/badge/docs-GitHub_Pages-blue" alt="Documentation"/></a>
 </p>
 
 ---
@@ -52,20 +52,20 @@ Choose your preferred installation method:
 Install once and use everywhere:
 
 ```bash
-uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+uv tool install specify-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
 ```
 
 Then use the tool directly:
 
 ```bash
-specify init <PROJECT_NAME>
-specify check
+specify-role init <PROJECT_NAME>
+specify-role check
 ```
 
 To upgrade specify run:
 
 ```bash
-uv tool install specify-cli --force --from git+https://github.com/github/spec-kit.git
+uv tool install specify-cli --force --from git+https://github.com/hjk1995/spec-kit-role-persona.git
 ```
 
 #### Option 2: One-time Usage
@@ -73,7 +73,7 @@ uv tool install specify-cli --force --from git+https://github.com/github/spec-ki
 Run directly without installing:
 
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME>
+uvx --from git+https://github.com/hjk1995/spec-kit-role-persona.git specify-cli init <PROJECT_NAME>
 ```
 
 **Benefits of persistent installation:**
@@ -798,7 +798,7 @@ rm gcm-linux_amd64.2.6.1.deb
 
 ## 💬 Support
 
-For support, please open a [GitHub issue](https://github.com/github/spec-kit/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
+For support, please open a [GitHub issue](https://github.com/hjk1995/spec-kit-role-persona/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
 
 ## 🙏 Acknowledgements
 

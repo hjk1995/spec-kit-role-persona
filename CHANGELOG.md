@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2025-01-15
 
+### Breaking Changes
+
+- **Repository URL Changed**: Project moved from `github/spec-kit` to `hjk1995/spec-kit-role-persona`
+- **Executable Name Changed**: Command renamed from `specify` to `specify-role`
+  - Installation: `uv tool install specify-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git`
+  - Usage: `specify-role init <PROJECT_NAME>` (instead of `specify init <PROJECT_NAME>`)
+
 ### Added
 
 - **Role Personas System**: Major new feature that brings specialized AI agent profiles to the Spec-Driven Development workflow
@@ -33,11 +40,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Enhanced `specify init` command with persona selection step
+- Enhanced `specify-role init` command with persona selection step
 - Updated project initialization workflow to include persona setup
 - Added persona configuration and file copying to initialization tracker
 - Updated all command templates (`specify.md`, `plan.md`, `tasks.md`, `implement.md`, `clarify.md`, `analyze.md`, `checklist.md`, `constitution.md`) with persona orchestration instructions
 - Updated all artifact templates (`spec-template.md`, `plan-template.md`, `tasks-template.md`) with persona contribution markers
+
+### Fixed
+
+- **Persona File Copying**: Fixed issue where persona files were not being copied during `specify-role init`
+  - Changed source path from package templates to downloaded project templates directory
+  - Added warning messages when persona files are not found
+  - Persona files now correctly copied from `templates/personas/` to `memory/personas/`
 
 ### Documentation
 
