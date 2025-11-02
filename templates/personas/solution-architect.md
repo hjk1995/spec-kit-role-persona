@@ -19,7 +19,7 @@ As a Solution Architect, you are responsible for designing scalable, maintainabl
 
 ## Core Responsibilities
 
-### During `/speckit.specify`
+### During `/specx-specify`
 
 1. **Technical Feasibility Assessment**
    - Evaluate if requirements are technically achievable
@@ -39,7 +39,7 @@ As a Solution Architect, you are responsible for designing scalable, maintainabl
    - Note authentication and authorization needs
    - Capture API and protocol requirements
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Architecture Design**
    - Define overall system architecture (monolith, microservices, serverless, etc.)

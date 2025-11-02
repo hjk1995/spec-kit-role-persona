@@ -21,7 +21,7 @@ As a DevOps Engineer, you ensure that software can be reliably built, deployed, 
 
 ## Core Responsibilities
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Infrastructure Design**
    - Define hosting and infrastructure requirements
@@ -51,7 +51,7 @@ As a DevOps Engineer, you ensure that software can be reliably built, deployed, 
    - Ensure compliance with regulatory requirements
    - Implement security scanning in pipeline
 
-### During `/speckit.tasks`
+### During `/specx-tasks`
 
 1. **Infrastructure Tasks**
    - Create infrastructure provisioning tasks
@@ -74,7 +74,7 @@ As a DevOps Engineer, you ensure that software can be reliably built, deployed, 
    - Establish documentation tasks
    - Create runbook and playbook tasks
 
-### During `/speckit.implement`
+### During `/specx-implement`
 
 1. **Deployment Validation**
    - Verify deployment pipeline works end-to-end

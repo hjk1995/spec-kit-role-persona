@@ -21,7 +21,7 @@ As a Backend Developer, you build the server-side logic, APIs, and data manageme
 
 ## Core Responsibilities
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Backend Architecture**
    - Choose backend framework (Express, FastAPI, Django, Spring Boot, etc.)
@@ -51,7 +51,7 @@ As a Backend Developer, you build the server-side logic, APIs, and data manageme
    - Establish transaction management
    - Design for testability and maintainability
 
-### During `/speckit.tasks`
+### During `/specx-tasks`
 
 1. **API Implementation Tasks**
    - Create tasks for each API endpoint
@@ -74,7 +74,7 @@ As a Backend Developer, you build the server-side logic, APIs, and data manageme
    - Create indexing tasks
    - Define backup and restore tasks
 
-### During `/speckit.implement`
+### During `/specx-implement`
 
 1. **API Implementation**
    - Implement API endpoints according to contracts

@@ -21,7 +21,7 @@ As a Frontend Developer, you build the user-facing parts of applications, implem
 
 ## Core Responsibilities
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Frontend Architecture**
    - Choose frontend framework (React, Vue, Angular, Svelte, etc.)
@@ -51,7 +51,7 @@ As a Frontend Developer, you build the user-facing parts of applications, implem
    - Establish CSS architecture (BEM, SMACSS, etc.)
    - Define animation and transition patterns
 
-### During `/speckit.tasks`
+### During `/specx-tasks`
 
 1. **UI Implementation Tasks**
    - Break down UI into component implementation tasks
@@ -67,7 +67,7 @@ As a Frontend Developer, you build the user-facing parts of applications, implem
    - Plan accessibility testing tasks
    - Define performance testing tasks
 
-### During `/speckit.implement`
+### During `/specx-implement`
 
 1. **UI Implementation**
    - Implement components according to design

@@ -1,137 +1,185 @@
-<div align="center">
-    <img src="./media/logo_small.webp" alt="Spec Kit Logo"/>
-    <h1>🌱 Spec Kit</h1>
-    <h3><em>Build high-quality software faster.</em></h3>
-</div>
+# SpecX Bot 🤖
 
-<p align="center">
-    <strong>An open source toolkit that allows you to focus on product scenarios and predictable outcomes instead of vibe coding every piece from scratch.</strong>
-</p>
+**AI-Powered Spec-Driven Development with Role-Based Personas**
 
-<p align="center">
-    <a href="https://github.com/hjk1995/spec-kit-role-persona/actions/workflows/release.yml"><img src="https://github.com/hjk1995/spec-kit-role-persona/actions/workflows/release.yml/badge.svg" alt="Release"/></a>
-    <a href="https://github.com/hjk1995/spec-kit-role-persona/stargazers"><img src="https://img.shields.io/github/stars/hjk1995/spec-kit-role-persona?style=social" alt="GitHub stars"/></a>
-    <a href="https://github.com/hjk1995/spec-kit-role-persona/blob/main/LICENSE"><img src="https://img.shields.io/github/license/hjk1995/spec-kit-role-persona" alt="License"/></a>
-    <a href="https://hjk1995.github.io/spec-kit-role-persona/"><img src="https://img.shields.io/badge/docs-GitHub_Pages-blue" alt="Documentation"/></a>
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+
+> **Note:** SpecX Bot is a fork of [GitHub Spec Kit](https://github.com/github/spec-kit) with enhanced role-based persona capabilities and multi-agent orchestration features.
 
 ---
 
-## Table of Contents
+## 🌟 What is SpecX Bot?
 
-- [🤔 What is Spec-Driven Development?](#-what-is-spec-driven-development)
-- [⚡ Get Started](#-get-started)
-- [👥 Role Personas](#-role-personas)
-- [📽️ Video Overview](#️-video-overview)
-- [🤖 Supported AI Agents](#-supported-ai-agents)
-- [🔧 Specify CLI Reference](#-specify-cli-reference)
-- [📚 Core Philosophy](#-core-philosophy)
-- [🌟 Development Phases](#-development-phases)
-- [🎯 Experimental Goals](#-experimental-goals)
-- [🔧 Prerequisites](#-prerequisites)
-- [📖 Learn More](#-learn-more)
-- [📋 Detailed Process](#-detailed-process)
-- [🔍 Troubleshooting](#-troubleshooting)
-- [👥 Maintainers](#-maintainers)
-- [💬 Support](#-support)
-- [🙏 Acknowledgements](#-acknowledgements)
-- [📄 License](#-license)
+**SpecX Bot** is an advanced CLI tool that supercharges Spec-Driven Development (SDD) by introducing **role-based AI personas** that work together as a virtual team. Think of it as having a Business Analyst, Solution Architect, Tech Lead, and other specialists collaborating on your project—all powered by AI.
 
-## 🤔 What is Spec-Driven Development?
+### Key Enhancements Over Original Spec Kit
 
-Spec-Driven Development **flips the script** on traditional software development. For decades, code has been king — specifications were just scaffolding we built and discarded once the "real work" of coding began. Spec-Driven Development changes this: **specifications become executable**, directly generating working implementations rather than just guiding them.
+- **🎭 Role-Based Personas**: Choose from 9 specialized AI personas (BA, SA, TL, QA, DevOps, Security, UX, Frontend, Backend)
+- **🔀 Multi-Agent Orchestration**: Personas work in parallel, each contributing their expertise
+- **🎯 Development Strategy Selection**: Choose between Role-Based (multi-persona) or Traditional (single-agent) approaches
+- **🏷️ Custom Project Namespaces**: Avoid command conflicts with project-specific command names
+- **⚡ Enhanced Workflow**: Streamlined initialization with arrow-key navigation
 
-## ⚡ Get Started
+---
 
-### 1. Install Specify CLI
+## 📋 Table of Contents
 
-Choose your preferred installation method:
+- [What is Spec-Driven Development?](#what-is-spec-driven-development)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Development Strategy](#development-strategy)
+- [Project Namespace](#project-namespace)
+- [Role Personas](#role-personas)
+- [Commands](#commands)
+- [Supported AI Agents](#supported-ai-agents)
+- [Credits](#credits)
+- [License](#license)
 
-#### Option 1: Persistent Installation (Recommended)
+---
 
-Install once and use everywhere:
+## 💡 What is Spec-Driven Development?
 
-```bash
-uv tool install specify-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+Spec-Driven Development (SDD) is a methodology that treats specifications as **executable artifacts** rather than static documents. Instead of writing specs that get outdated, SDD creates living specifications that guide the entire development process.
+
+### The SDD Workflow
+
+```
+1. Specify   → Create detailed feature specifications
+2. Plan      → Generate implementation plans with architecture
+3. Tasks     → Break down into actionable development tasks
+4. Implement → Execute with AI guidance and validation
 ```
 
-Then use the tool directly:
+For a deep dive into SDD principles, see the [original Spec Kit documentation](https://github.com/github/spec-kit).
+
+---
+
+## 🚀 Installation
+
+### Prerequisites
+
+- **Python 3.11+**
+- **uv** (Python package manager)
+- **Git**
+- **AI Coding Agent** (Claude Code, Cursor, GitHub Copilot, etc.)
+
+### Install SpecX Bot
 
 ```bash
-specify-role init <PROJECT_NAME>
-specify-role check
+# Install from GitHub
+uv tool install specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+
+# Verify installation
+specx --version
 ```
 
-To upgrade specify run:
+### Update SpecX Bot
 
 ```bash
-uv tool install specify-cli --force --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+uv tool install --force specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
 ```
 
-#### Option 2: One-time Usage
+---
 
-Run directly without installing:
+## ⚡ Quick Start
+
+### Initialize a New Project
 
 ```bash
-uvx --from git+https://github.com/hjk1995/spec-kit-role-persona.git specify-cli init <PROJECT_NAME>
+# Interactive mode (recommended)
+specx init myproject
+
+# With AI agent specified
+specx init myproject --ai cursor-agent
+
+# Initialize in current directory
+specx init --here
 ```
 
-**Benefits of persistent installation:**
+### Interactive Setup Flow
 
-- Tool stays installed and available in PATH
-- No need to create shell aliases
-- Better tool management with `uv tool list`, `uv tool upgrade`, `uv tool uninstall`
-- Cleaner shell configuration
+When you run `specx init`, you'll be guided through:
 
-### 2. Establish project principles
+1. **AI Assistant Selection** - Choose your preferred AI agent
+2. **Script Type** - Select bash (sh) or PowerShell (ps)
+3. **Development Strategy** - Role-Based or Traditional
+4. **Project Namespace** (Role-Based only) - Custom command prefix
+5. **Persona Selection** (Role-Based only) - Choose your virtual team
 
-Launch your AI assistant in the project directory. The `/speckit.*` commands are available in the assistant.
+### Your First Specification
 
-Use the **`/speckit.constitution`** command to create your project's governing principles and development guidelines that will guide all subsequent development.
+After initialization, create your first feature spec:
 
 ```bash
-/speckit.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements
+# Navigate to your project
+cd myproject
+
+# Create a specification (using your AI agent)
+# Use your chosen namespace (default: speckit)
+/speckit-specify Create a user authentication system with login, signup, and password reset
+
+# Or if you chose a custom namespace like "myapp":
+/myapp-specify Create a user authentication system with login, signup, and password reset
 ```
 
-### 3. Create the spec
+---
 
-Use the **`/speckit.specify`** command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
+## 🎯 Development Strategy
 
-```bash
-/speckit.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
+SpecX Bot offers two development approaches to match your project needs:
+
+### 1. Role-Based Development (Recommended)
+
+Use specialized AI personas that work together as virtual team members. Each persona contributes domain-specific expertise at appropriate phases.
+
+**Best for:**
+- Complex projects requiring comprehensive planning
+- Team collaboration and knowledge sharing
+- Projects with multiple stakeholders
+- Long-term maintainability and documentation
+
+### 2. Traditional Development
+
+Single AI agent handles all development tasks in a straightforward, unified approach.
+
+**Best for:**
+- Quick prototypes and MVPs
+- Simple, single-purpose projects
+- Solo development with minimal overhead
+- Learning and experimentation
+
+### Interactive Selection
+
+```
+Development Strategy
+Choose your development approach:
+
+> Role-Based (Recommended) - Multi-persona collaborative development with specialized expertise
+  Traditional - Single AI agent handles all tasks, simpler and faster
+
+Select development strategy (or press Enter for Role-Based):
 ```
 
-### 4. Create a technical implementation plan
+### Key Differences
 
-Use the **`/speckit.plan`** command to provide your tech stack and architecture choices.
+| Feature | Role-Based | Traditional |
+|---------|------------|-------------|
+| **Namespace Selection** | ✅ Custom namespace prompt | ❌ Uses default "speckit" |
+| **Persona Selection** | ✅ Multi-select personas | ❌ No personas |
+| **Command Prefix** | Custom (e.g., `/myapp-specify`) | Default (`/speckit-specify`) |
+| **Setup Steps** | Strategy → Namespace → Personas | Strategy only |
+| **Complexity** | Moderate (3 extra steps) | Minimal (no extra steps) |
 
-```bash
-/speckit.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
-```
+---
 
-### 5. Break down into tasks
+## 🎯 Project Namespace (Role-Based Strategy Only)
 
-Use **`/speckit.tasks`** to create an actionable task list from your implementation plan.
+When using the **Role-Based** development strategy, SpecX Bot allows you to customize the namespace for your project commands. This lets you create project-specific commands that match your workflow and avoid conflicts with other projects.
 
-```bash
-/speckit.tasks
-```
+**Note:** Traditional strategy uses the default "speckit" namespace and skips this step for simplicity.
 
-### 6. Execute implementation
-
-Use **`/speckit.implement`** to execute all tasks and build your feature according to the plan.
-
-```bash
-/speckit.implement
-```
-
-For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
-
-## 🎯 Project Namespace
-
-Spec Kit allows you to customize the namespace for your project commands during initialization. This lets you create project-specific commands that match your workflow and avoid conflicts with other projects.
-
-**During `specify-role init`, you'll be prompted to set a project namespace:**
+### Configuration
 
 ```
 Project Namespace Configuration
@@ -144,13 +192,15 @@ Project namespace: myapp
 Your commands: /myapp-specify, /myapp-plan, /myapp-tasks, /myapp-implement, etc.
 ```
 
-**Validation Rules:**
+### Validation Rules
+
 - Must be a single word (no spaces)
 - Lowercase letters, numbers, and hyphens only
 - Must start with a letter
 - Default is "speckit" if no input provided
 
-**Your commands will be:**
+### Your Commands
+
 - `/<namespace>-specify` - Create feature specifications
 - `/<namespace>-plan` - Generate implementation plans
 - `/<namespace>-tasks` - Break down into tasks
@@ -160,17 +210,31 @@ Your commands: /myapp-specify, /myapp-plan, /myapp-tasks, /myapp-implement, etc.
 - `/<namespace>-checklist` - Generate quality checklists
 - `/<namespace>-constitution` - Manage project governance
 
-**How it works:**
+### How it Works
+
 - The namespace is stored in `.specify/config.json` for reference
-- During initialization, all command files are automatically updated with your chosen namespace
-- Commands are properly installed and listed in your AI agent with the correct namespace
-- This ensures no conflicts between multiple projects using Spec Kit
+- During initialization, command files are generated with namespace-prefixed filenames (e.g., `myapp-specify.md`)
+- Command content uses the namespace in slash commands (e.g., `/myapp.specify`)
+- Commands appear in your AI agent with the custom namespace (e.g., `/myapp-specify`, `/myapp-plan`)
+- Default namespace "speckit" uses original filenames for backward compatibility
+- This ensures no conflicts between multiple projects using SpecX Bot
+
+### Example
+
+```bash
+# With namespace "myapp"
+.cursor/commands/
+  ├── myapp-specify.md      # Command: /myapp.specify
+  ├── myapp-plan.md         # Command: /myapp.plan
+  ├── myapp-tasks.md        # Command: /myapp.tasks
+  └── myapp-implement.md    # Command: /myapp.implement
+```
 
 ---
 
-## 👥 Role Personas
+## 👥 Role Personas (Role-Based Strategy Only)
 
-Spec Kit now supports **Role Personas** - specialized AI agent profiles that bring domain-specific expertise to your development workflow. During project initialization, you can select which personas to enable, and they'll contribute their specialized knowledge throughout the spec-driven development process.
+When using the **Role-Based** development strategy, SpecX Bot brings specialized AI agent profiles to your project. During project initialization, you can select which personas to enable, and they'll contribute their specialized knowledge throughout the spec-driven development process.
 
 ### What are Role Personas?
 
@@ -190,661 +254,289 @@ Role personas are specialized AI profiles that act as virtual team members, each
 
 | Persona | Focus | Key Contributions |
 |---------|-------|-------------------|
-| **Quality Assurance (QA)** | Testing & Quality | Test strategies, quality gates, validation criteria, bug prevention |
-| **DevOps Engineer** | Infrastructure & Deployment | CI/CD pipelines, monitoring, infrastructure design, operational excellence |
-| **Security Engineer** | Security & Compliance | Threat modeling, security controls, compliance requirements, vulnerability assessment |
-| **UX Designer** | User Experience | Usability, accessibility, interaction design, user research |
-| **Frontend Developer (FE)** | UI Implementation | Component design, state management, responsive design, frontend architecture |
-| **Backend Developer (BE)** | API & Data | API design, database design, business logic, backend architecture |
+| **Quality Assurance (QA)** | Testing & Quality | Test strategies, quality gates, edge cases, validation criteria |
+| **DevOps Engineer** | Infrastructure & Deployment | CI/CD pipelines, deployment strategies, monitoring, scalability |
+| **Security Engineer** | Security & Compliance | Security requirements, threat modeling, authentication, compliance |
+| **UX Designer** | User Experience | User flows, accessibility, usability, interaction design |
+| **Frontend Developer** | Frontend Implementation | UI components, state management, responsive design, frontend architecture |
+| **Backend Developer** | Backend Implementation | API design, database schema, business logic, backend architecture |
 
-### How Personas Work
+### Persona Selection
 
-#### 1. Selection During Initialization
+During `specx init` (Role-Based mode), you'll see:
 
-When running `specify init`, you'll be prompted to select personas using an interactive multi-select interface:
+```
+Select role personas for your project:
 
-```bash
-specify init my-project
+> [✓] Business Analyst (BA) - Requirements gathering, user stories, acceptance criteria
+  [✓] Solution Architect (SA) - Technical architecture, system design, integration
+  [✓] Tech Lead (TL) - Implementation strategy, code organization, best practices
+  [ ] Quality Assurance (QA) - Test strategies, quality gates, validation
+  [ ] DevOps Engineer - Infrastructure, deployment, CI/CD, monitoring
+  [ ] Security Engineer - Security requirements, threat modeling, compliance
+  [ ] UX Designer - User experience, accessibility, usability
+  [ ] Frontend Developer - UI implementation, component design, state management
+  [ ] Backend Developer - API design, database design, business logic
+
+Use ↑↓ to navigate, Space to select/deselect, Enter to confirm
+Selected: 3 personas
 ```
 
-Use arrow keys to navigate, space bar to toggle selection, and Enter to confirm. Selected personas are:
+### Persona Contributions by Phase
 
-- Copied to your project's `memory/personas/` directory
-- Stored in `.specify/config.json` for reference by commands
-- Activated for all subsequent spec commands
+> **Note:** Commands shown use the default `speckit` namespace. If you chose a custom namespace (e.g., `myapp`), replace `speckit` with your namespace.
 
-#### 2. Persona Contributions by Phase
+#### `/<namespace>-specify` - Specification Phase
 
-Different personas contribute at different stages of development:
+- **BA**: User stories, functional requirements, acceptance criteria
+- **SA**: Technical feasibility, system constraints
+- **Security**: Security and compliance requirements
+- **UX**: User experience and accessibility requirements
+- **QA**: Test scenarios and quality criteria
 
-**During `/speckit.specify` (Specification)**:
+#### `/<namespace>-plan` - Planning Phase
 
-- **BA**: Creates user stories, functional requirements, acceptance criteria
-- **SA**: Validates technical feasibility, identifies system constraints
-- **Security**: Identifies security and compliance requirements
-- **UX**: Defines user experience and accessibility requirements
-- **QA**: Creates test scenarios and quality criteria
+- **SA**: Architecture, technology stack, data models, API contracts
+- **TL**: Implementation strategy, code organization, development workflow
+- **DevOps**: Infrastructure, deployment strategy, monitoring
+- **Security**: Security architecture, authentication/authorization
+- **UX**: Interaction design, UI patterns, responsive design
+- **Frontend**: Frontend architecture, component design, state management
+- **Backend**: Backend architecture, API design, database schema
 
-**During `/speckit.plan` (Planning)**:
+#### `/<namespace>-tasks` - Task Breakdown Phase
 
-- **SA**: Designs architecture, selects technology stack, creates data models and API contracts
-- **TL**: Defines implementation strategy, code organization, development workflow
-- **DevOps**: Plans infrastructure, deployment strategy, monitoring and logging
-- **Security**: Designs security architecture, authentication/authorization patterns
-- **UX**: Defines interaction design, UI patterns, responsive design approach
-- **FE**: Plans frontend architecture, component design, state management
-- **BE**: Plans backend architecture, API design, database schema
+- **TL**: Task breakdown, dependency management, estimation
+- **QA**: Testing tasks, validation checkpoints
+- **Frontend**: UI implementation tasks
+- **Backend**: API and database tasks
+- **DevOps**: Infrastructure and CI/CD tasks
 
-**During `/speckit.tasks` (Task Breakdown)**:
+#### `/<namespace>-implement` - Implementation Phase
 
-- **TL**: Breaks down implementation into tasks, manages dependencies, estimates effort
-- **QA**: Creates testing tasks and validation checkpoints
-- **FE**: Defines UI implementation tasks
-- **BE**: Defines API and database implementation tasks
-- **DevOps**: Creates infrastructure and CI/CD setup tasks
+- **TL**: Code review, best practices enforcement, quality gates
+- **QA**: Test execution, quality validation, defect identification
+- **DevOps**: Deployment validation, monitoring setup, operational readiness
+- **Security**: Security validation, vulnerability assessment
+- **UX**: UX validation, accessibility testing, usability testing
+- **Frontend**: UI implementation, frontend validation
+- **Backend**: API implementation, backend validation
 
-**During `/speckit.implement` (Implementation)**:
+#### `/<namespace>-clarify` - Clarification Phase
 
-- **TL**: Reviews code quality, enforces best practices, guides implementation
-- **QA**: Validates quality gates, runs tests, identifies defects
-- **DevOps**: Validates deployment readiness, sets up monitoring
-- **Security**: Performs security validation and vulnerability assessment
-- **UX**: Validates user experience and accessibility compliance
-- **FE**: Implements and validates UI components
-- **BE**: Implements and validates backend logic and APIs
+- **BA**: Functional requirements clarification, acceptance criteria refinement
+- **SA**: Technical feasibility clarification, architecture validation
+- **TL**: Implementation approach clarification, best practices alignment
+- **QA**: Test scenario clarification, edge case identification
+- **DevOps**: Infrastructure requirement clarification, deployment validation
+- **Security**: Security requirement clarification, threat model validation
+- **UX**: User experience clarification, accessibility refinement
+- **Frontend**: Frontend requirement clarification, UI specification refinement
+- **Backend**: Backend requirement clarification, API specification refinement
 
-**During `/speckit.clarify` (Clarification)**:
+#### `/<namespace>-analyze` - Analysis Phase
 
-- **BA**: Clarifies functional requirements, resolves user story ambiguities, refines acceptance criteria
-- **SA**: Clarifies technical feasibility, validates architecture constraints, resolves integration points
-- **TL**: Clarifies implementation approach, validates technical constraints, ensures best practices alignment
-- **QA**: Clarifies test scenarios, identifies edge cases, refines quality criteria
-- **DevOps**: Clarifies infrastructure requirements, validates deployment constraints, ensures operational readiness
-- **Security**: Clarifies security requirements, validates threat model, identifies compliance constraints
-- **UX**: Clarifies user experience requirements, refines accessibility criteria, validates usability
-- **FE**: Clarifies frontend requirements, refines UI specifications, validates component design
-- **BE**: Clarifies backend requirements, refines API specifications, validates data model
+- **BA**: Requirements completeness, acceptance criteria validation
+- **SA**: Architecture consistency, technical feasibility validation
+- **TL**: Implementation task coverage, code organization alignment
+- **QA**: Test coverage validation, quality gate verification
+- **DevOps**: Infrastructure task coverage, deployment readiness
+- **Security**: Security requirement coverage, threat model validation
+- **UX**: User experience requirement coverage, accessibility validation
+- **Frontend**: Frontend task coverage, UI requirement completeness
+- **Backend**: Backend task coverage, API requirement completeness
 
-**During `/speckit.analyze` (Analysis)**:
+#### `/<namespace>-checklist` - Checklist Generation Phase
 
-- **BA**: Validates requirements completeness, checks user story coverage, validates acceptance criteria
-- **SA**: Validates architecture consistency, checks technical feasibility, verifies integration points
-- **TL**: Validates implementation task coverage, checks code organization alignment, ensures best practices
-- **QA**: Validates test coverage, verifies quality gates, identifies edge cases
-- **DevOps**: Validates infrastructure task coverage, checks deployment readiness, reviews operational considerations
-- **Security**: Validates security requirement coverage, verifies threat model, checks compliance
-- **UX**: Validates user experience requirement coverage, checks accessibility, reviews usability criteria
-- **FE**: Validates frontend task coverage, checks UI requirement completeness, verifies component consistency
-- **BE**: Validates backend task coverage, checks API requirement completeness, verifies data model consistency
+- **BA**: Requirements quality validation, acceptance criteria completeness
+- **SA**: Architecture requirement clarity, technical constraint validation
+- **TL**: Implementation requirement completeness, best practices validation
+- **QA**: Test scenario coverage, quality criteria validation
+- **DevOps**: Infrastructure requirement completeness, deployment criteria validation
+- **Security**: Security requirement coverage, compliance validation
+- **UX**: User experience requirement quality, accessibility criteria validation
+- **Frontend**: Frontend requirement clarity, UI specification completeness
+- **Backend**: Backend requirement clarity, API specification completeness
 
-**During `/speckit.checklist` (Checklist Generation)**:
+#### `/<namespace>-constitution` - Governance Phase
 
-- **BA**: Generates requirements quality validation items, checks acceptance criteria completeness
-- **SA**: Generates architecture requirement clarity items, validates technical constraints
-- **TL**: Generates implementation requirement completeness items, validates best practices
-- **QA**: Generates test scenario coverage items, validates quality criteria, identifies edge cases
-- **DevOps**: Generates infrastructure requirement completeness items, validates deployment criteria
-- **Security**: Generates security requirement coverage items, validates compliance, checks threat model completeness
-- **UX**: Generates user experience requirement quality items, validates accessibility criteria, checks usability completeness
-- **FE**: Generates frontend requirement clarity items, checks UI specification completeness
-- **BE**: Generates backend requirement clarity items, checks API specification completeness
+- **BA**: Requirements governance principles, acceptance criteria standards
+- **SA**: Architecture governance principles, technical standards
+- **TL**: Code quality principles, best practices standards
+- **QA**: Testing standards, quality gate principles
+- **DevOps**: Infrastructure governance, deployment standards
+- **Security**: Security governance principles, compliance standards
+- **UX**: User experience principles, accessibility standards
+- **Frontend**: Frontend standards, UI consistency principles
+- **Backend**: Backend standards, API governance principles
 
-**During `/speckit.constitution` (Constitution Management)**:
+### Sub-Agent Orchestration
 
-- **BA**: Contributes requirements governance principles, acceptance criteria standards, user story guidelines
-- **SA**: Contributes architecture governance principles, technical standards, integration guidelines
-- **TL**: Contributes code quality principles, best practices standards, implementation guidelines
-- **QA**: Contributes testing standards, quality gate principles, validation guidelines
-- **DevOps**: Contributes infrastructure governance, deployment standards, operational principles
-- **Security**: Contributes security governance principles, compliance standards, threat modeling guidelines
-- **UX**: Contributes user experience principles, accessibility standards, usability guidelines
-- **FE**: Contributes frontend standards, UI consistency principles, component guidelines
-- **BE**: Contributes backend standards, API governance principles, data integrity guidelines
+SpecX Bot's persona system enables powerful sub-agent orchestration:
 
-#### 3. Sub-Agent Orchestration
+1. **Main AI agent** reads persona definitions from `memory/personas/`
+2. **Configuration** is loaded from `.specify/config.json`
+3. **For each command phase**, relevant personas are identified
+4. **Personas are invoked** as sub-agents with appropriate context
+5. **Parallel execution** allows independent personas to work simultaneously
+6. **Main agent merges** contributions into cohesive artifacts
+7. **Conflict resolution** ensures consistent recommendations
 
-When personas are enabled, your main AI agent acts as an orchestrator:
+### Customization
 
-1. **Parallel Execution**: Independent personas work simultaneously on their contributions
-2. **Context Sharing**: Personas have access to relevant project artifacts and specifications
-3. **Contribution Merging**: The orchestrator integrates persona outputs into cohesive artifacts
-4. **Conflict Resolution**: The orchestrator resolves any conflicting recommendations
-
-### Customizing Personas
-
-You can customize personas for your specific project needs:
+You can customize personas in several ways:
 
 1. **Edit Existing Personas**: Modify files in `memory/personas/` to add project-specific guidelines
 2. **Create Custom Personas**: Add new persona definition files following the standard format
-3. **Disable Personas**: Update `.specify/config.json` to temporarily disable personas
-4. **Adjust Orchestration**: Configure parallel execution and concurrency limits in config
+3. **Disable Personas**: Update `.specify/config.json` to change enabled personas
+4. **Adjust Orchestration**: Configure parallel execution and concurrency limits
 
-### Example Workflows
+---
 
-**E-commerce Project**:
+## 📝 Commands
 
-- Select: BA, SA, TL, QA, Security, FE, BE
-- BA defines checkout user stories
-- Security identifies PCI-DSS requirements
-- SA designs payment processing architecture
-- FE plans shopping cart UI
-- BE designs payment API
-- TL breaks down into tasks
-- QA creates payment flow tests
+SpecX Bot provides a comprehensive set of commands for the entire development lifecycle:
 
-**Internal Dashboard**:
+### Core Commands
 
-- Select: BA, SA, TL, UX, FE
-- BA defines reporting requirements
-- UX designs dashboard layout
-- SA plans data aggregation
-- FE designs chart components
-- TL creates implementation tasks
+| Command | Description | Example |
+|---------|-------------|---------|
+| `specx init` | Initialize a new project | `specx init myproject --ai cursor-agent` |
+| `specx check` | Verify prerequisites | `specx check` |
 
-For more details, see the [Role Personas Documentation](memory/personas/README.md).
+### Spec Commands (via AI Agent)
 
-## 📽️ Video Overview
+These commands are executed through your AI agent (e.g., in Cursor, Claude Code):
 
-Want to see Spec Kit in action? Watch our [video overview](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv)!
+> **Note:** Replace `<namespace>` with your chosen namespace (default: `speckit`, or custom like `myapp`).
 
-[![Spec Kit video header](/media/spec-kit-video-header.jpg)](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv)
+| Command | Description | When to Use |
+|---------|-------------|-------------|
+| `/<namespace>-specify` | Create feature specification | Start of new feature development |
+| `/<namespace>-plan` | Generate implementation plan | After specification is complete |
+| `/<namespace>-tasks` | Break down into tasks | After plan is validated |
+| `/<namespace>-implement` | Execute implementation | When ready to code |
+| `/<namespace>-clarify` | Clarify ambiguities | When spec needs refinement |
+| `/<namespace>-analyze` | Analyze cross-artifact consistency | Quality assurance check |
+| `/<namespace>-checklist` | Generate quality checklist | Before implementation |
+| `/<namespace>-constitution` | Manage project governance | Establish project principles |
+
+### Command Workflow
+
+```
+1. /<namespace>-specify "Add user authentication"
+   ↓
+2. /<namespace>-plan
+   ↓
+3. /<namespace>-tasks
+   ↓
+4. /<namespace>-implement
+```
+
+**Example with default namespace:**
+```
+1. /speckit-specify "Add user authentication"
+2. /speckit-plan
+3. /speckit-tasks
+4. /speckit-implement
+```
+
+For detailed step-by-step instructions, see the [Spec-Driven Development guide](./spec-driven.md).
+
+---
 
 ## 🤖 Supported AI Agents
 
-| Agent                                                     | Support | Notes                                             |
-|-----------------------------------------------------------|---------|---------------------------------------------------|
-| [Claude Code](https://www.anthropic.com/claude-code)      | ✅ |                                                   |
-| [GitHub Copilot](https://code.visualstudio.com/)          | ✅ |                                                   |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | ✅ |                                                   |
-| [Cursor](https://cursor.sh/)                              | ✅ |                                                   |
-| [Qwen Code](https://github.com/QwenLM/qwen-code)          | ✅ |                                                   |
-| [opencode](https://opencode.ai/)                          | ✅ |                                                   |
-| [Windsurf](https://windsurf.com/)                         | ✅ |                                                   |
-| [Kilo Code](https://github.com/Kilo-Org/kilocode)         | ✅ |                                                   |
-| [Auggie CLI](https://docs.augmentcode.com/cli/overview)   | ✅ |                                                   |
-| [CodeBuddy CLI](https://www.codebuddy.ai/cli)             | ✅ |                                                   |
-| [Roo Code](https://roocode.com/)                          | ✅ |                                                   |
-| [Codex CLI](https://github.com/openai/codex)              | ✅ |                                                   |
-| [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/) | ⚠️ | Amazon Q Developer CLI [does not support](https://github.com/aws/amazon-q-developer-cli/issues/3064) custom arguments for slash commands. |
-| [Amp](https://ampcode.com/) | ✅ | |
+SpecX Bot works with all major AI coding assistants:
 
-## 🔧 Specify CLI Reference
+| AI Agent | Support Level | Installation | Notes |
+|----------|---------------|--------------|-------|
+| **Cursor** | ✅ Full | [cursor.sh](https://cursor.sh/) | Excellent sub-agent support |
+| **Claude Code** | ✅ Full | [claude.ai/code](https://claude.ai/code) | Native orchestration |
+| **GitHub Copilot** | ✅ Full | Built into VS Code | IDE-based |
+| **Windsurf** | ✅ Full | [windsurf.ai](https://windsurf.ai/) | IDE-based workflows |
+| **Gemini CLI** | ✅ Full | [github.com/google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) | CLI tool |
+| **Qwen Code** | ✅ Full | [qwen.ai](https://qwen.ai/) | CLI tool |
+| **Amazon Q Developer** | ✅ Full | [aws.amazon.com/q](https://aws.amazon.com/q) | CLI tool |
+| **Others** | ✅ Partial | Various | May have limited sub-agent support |
 
-The `specify` command supports the following options:
+### Selecting Your AI Agent
 
-### Commands
-
-| Command     | Description                                                    |
-|-------------|----------------------------------------------------------------|
-| `init`      | Initialize a new Specify project from the latest template      |
-| `check`     | Check for installed tools (`git`, `claude`, `gemini`, `code`/`code-insiders`, `cursor-agent`, `windsurf`, `qwen`, `opencode`, `codex`) |
-
-### `specify init` Arguments & Options
-
-| Argument/Option        | Type     | Description                                                                  |
-|------------------------|----------|------------------------------------------------------------------------------|
-| `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory) |
-| `--ai`                 | Option   | AI assistant to use: `claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, or `q` |
-| `--script`             | Option   | Script variant to use: `sh` (bash/zsh) or `ps` (PowerShell)                 |
-| `--ignore-agent-tools` | Flag     | Skip checks for AI agent tools like Claude Code                             |
-| `--no-git`             | Flag     | Skip git repository initialization                                          |
-| `--here`               | Flag     | Initialize project in the current directory instead of creating a new one   |
-| `--force`              | Flag     | Force merge/overwrite when initializing in current directory (skip confirmation) |
-| `--skip-tls`           | Flag     | Skip SSL/TLS verification (not recommended)                                 |
-| `--debug`              | Flag     | Enable detailed debug output for troubleshooting                            |
-| `--github-token`       | Option   | GitHub token for API requests (or set GH_TOKEN/GITHUB_TOKEN env variable)  |
-
-### Examples
+During `specx init`, you can specify your preferred agent:
 
 ```bash
-# Basic project initialization
-specify init my-project
-
-# Initialize with specific AI assistant
-specify init my-project --ai claude
-
-# Initialize with Cursor support
-specify init my-project --ai cursor-agent
-
-# Initialize with Windsurf support
-specify init my-project --ai windsurf
-
-# Initialize with Amp support
-specify init my-project --ai amp
-
-# Initialize with PowerShell scripts (Windows/cross-platform)
-specify init my-project --ai copilot --script ps
-
-# Initialize in current directory
-specify init . --ai copilot
-# or use the --here flag
-specify init --here --ai copilot
-
-# Force merge into current (non-empty) directory without confirmation
-specify init . --force --ai copilot
-# or 
-specify init --here --force --ai copilot
-
-# Skip git initialization
-specify init my-project --ai gemini --no-git
-
-# Enable debug output for troubleshooting
-specify init my-project --ai claude --debug
-
-# Use GitHub token for API requests (helpful for corporate environments)
-specify init my-project --ai claude --github-token ghp_your_token_here
-
-# Check system requirements
-specify check
+specx init myproject --ai cursor-agent
+specx init myproject --ai claude
+specx init myproject --ai copilot
 ```
 
-### Available Slash Commands
-
-After running `specify init`, your AI coding agent will have access to these slash commands for structured development:
-
-#### Core Commands
-
-Essential commands for the Spec-Driven Development workflow:
-
-| Command                  | Description                                                           |
-|--------------------------|-----------------------------------------------------------------------|
-| `/speckit.constitution`  | Create or update project governing principles and development guidelines |
-| `/speckit.specify`       | Define what you want to build (requirements and user stories)        |
-| `/speckit.plan`          | Create technical implementation plans with your chosen tech stack     |
-| `/speckit.tasks`         | Generate actionable task lists for implementation                     |
-| `/speckit.implement`     | Execute all tasks to build the feature according to the plan         |
-
-#### Optional Commands
-
-Additional commands for enhanced quality and validation:
-
-| Command              | Description                                                           |
-|----------------------|-----------------------------------------------------------------------|
-| `/speckit.clarify`   | Clarify underspecified areas (recommended before `/speckit.plan`; formerly `/quizme`) |
-| `/speckit.analyze`   | Cross-artifact consistency & coverage analysis (run after `/speckit.tasks`, before `/speckit.implement`) |
-| `/speckit.checklist` | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
-
-### Environment Variables
-
-| Variable         | Description                                                                                    |
-|------------------|------------------------------------------------------------------------------------------------|
-| `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches.<br/>**Must be set in the context of the agent you're working with prior to using `/speckit.plan` or follow-up commands. |
-
-## 📚 Core Philosophy
-
-Spec-Driven Development is a structured process that emphasizes:
-
-- **Intent-driven development** where specifications define the "*what*" before the "*how*"
-- **Rich specification creation** using guardrails and organizational principles
-- **Multi-step refinement** rather than one-shot code generation from prompts
-- **Heavy reliance** on advanced AI model capabilities for specification interpretation
-
-## 🌟 Development Phases
-
-| Phase | Focus | Key Activities |
-|-------|-------|----------------|
-| **0-to-1 Development** ("Greenfield") | Generate from scratch | <ul><li>Start with high-level requirements</li><li>Generate specifications</li><li>Plan implementation steps</li><li>Build production-ready applications</li></ul> |
-| **Creative Exploration** | Parallel implementations | <ul><li>Explore diverse solutions</li><li>Support multiple technology stacks & architectures</li><li>Experiment with UX patterns</li></ul> |
-| **Iterative Enhancement** ("Brownfield") | Brownfield modernization | <ul><li>Add features iteratively</li><li>Modernize legacy systems</li><li>Adapt processes</li></ul> |
-
-## 🎯 Experimental Goals
-
-Our research and experimentation focus on:
-
-### Technology independence
-
-- Create applications using diverse technology stacks
-- Validate the hypothesis that Spec-Driven Development is a process not tied to specific technologies, programming languages, or frameworks
-
-### Enterprise constraints
-
-- Demonstrate mission-critical application development
-- Incorporate organizational constraints (cloud providers, tech stacks, engineering practices)
-- Support enterprise design systems and compliance requirements
-
-### User-centric development
-
-- Build applications for different user cohorts and preferences
-- Support various development approaches (from vibe-coding to AI-native development)
-
-### Creative & iterative processes
-
-- Validate the concept of parallel implementation exploration
-- Provide robust iterative feature development workflows
-- Extend processes to handle upgrades and modernization tasks
-
-## 🔧 Prerequisites
-
-- **Linux/macOS/Windows**
-- [Supported](#-supported-ai-agents) AI coding agent.
-- [uv](https://docs.astral.sh/uv/) for package management
-- [Python 3.11+](https://www.python.org/downloads/)
-- [Git](https://git-scm.com/downloads)
-
-If you encounter issues with an agent, please open an issue so we can refine the integration.
-
-## 📖 Learn More
-
-- **[Complete Spec-Driven Development Methodology](./spec-driven.md)** - Deep dive into the full process
-- **[Detailed Walkthrough](#-detailed-process)** - Step-by-step implementation guide
+Or choose interactively during initialization.
 
 ---
 
-## 📋 Detailed Process
+## 🙏 Credits
 
-<details>
-<summary>Click to expand the detailed step-by-step walkthrough</summary>
+**SpecX Bot** is a fork of the excellent [GitHub Spec Kit](https://github.com/github/spec-kit) project.
 
-You can use the Specify CLI to bootstrap your project, which will bring in the required artifacts in your environment. Run:
+### Original Spec Kit
 
-```bash
-specify init <project_name>
-```
-
-Or initialize in the current directory:
-
-```bash
-specify init .
-# or use the --here flag
-specify init --here
-# Skip confirmation when the directory already has files
-specify init . --force
-# or
-specify init --here --force
-```
-
-![Specify CLI bootstrapping a new project in the terminal](./media/specify_cli.gif)
-
-You will be prompted to select the AI agent you are using. You can also proactively specify it directly in the terminal:
-
-```bash
-specify init <project_name> --ai claude
-specify init <project_name> --ai gemini
-specify init <project_name> --ai copilot
-
-# Or in current directory:
-specify init . --ai claude
-specify init . --ai codex
-
-# or use --here flag
-specify init --here --ai claude
-specify init --here --ai codex
-
-# Force merge into a non-empty current directory
-specify init . --force --ai claude
-
-# or
-specify init --here --force --ai claude
-```
-
-The CLI will check if you have Claude Code, Gemini CLI, Cursor CLI, Qwen CLI, opencode, Codex CLI, or Amazon Q Developer CLI installed. If you do not, or you prefer to get the templates without checking for the right tools, use `--ignore-agent-tools` with your command:
-
-```bash
-specify init <project_name> --ai claude --ignore-agent-tools
-```
-
-### **STEP 1:** Establish project principles
-
-Go to the project folder and run your AI agent. In our example, we're using `claude`.
-
-![Bootstrapping Claude Code environment](./media/bootstrap-claude-code.gif)
-
-You will know that things are configured correctly if you see the `/speckit.constitution`, `/speckit.specify`, `/speckit.plan`, `/speckit.tasks`, and `/speckit.implement` commands available.
-
-The first step should be establishing your project's governing principles using the `/speckit.constitution` command. This helps ensure consistent decision-making throughout all subsequent development phases:
-
-```text
-/speckit.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements. Include governance for how these principles should guide technical decisions and implementation choices.
-```
-
-This step creates or updates the `.specify/memory/constitution.md` file with your project's foundational guidelines that the AI agent will reference during specification, planning, and implementation phases.
-
-### **STEP 2:** Create project specifications
-
-With your project principles established, you can now create the functional specifications. Use the `/speckit.specify` command and then provide the concrete requirements for the project you want to develop.
-
->[!IMPORTANT]
->Be as explicit as possible about *what* you are trying to build and *why*. **Do not focus on the tech stack at this point**.
-
-An example prompt:
-
-```text
-Develop Taskify, a team productivity platform. It should allow users to create projects, add team members,
-assign tasks, comment and move tasks between boards in Kanban style. In this initial phase for this feature,
-let's call it "Create Taskify," let's have multiple users but the users will be declared ahead of time, predefined.
-I want five users in two different categories, one product manager and four engineers. Let's create three
-different sample projects. Let's have the standard Kanban columns for the status of each task, such as "To Do,"
-"In Progress," "In Review," and "Done." There will be no login for this application as this is just the very
-first testing thing to ensure that our basic features are set up. For each task in the UI for a task card,
-you should be able to change the current status of the task between the different columns in the Kanban work board.
-You should be able to leave an unlimited number of comments for a particular card. You should be able to, from that task
-card, assign one of the valid users. When you first launch Taskify, it's going to give you a list of the five users to pick
-from. There will be no password required. When you click on a user, you go into the main view, which displays the list of
-projects. When you click on a project, you open the Kanban board for that project. You're going to see the columns.
-You'll be able to drag and drop cards back and forth between different columns. You will see any cards that are
-assigned to you, the currently logged in user, in a different color from all the other ones, so you can quickly
-see yours. You can edit any comments that you make, but you can't edit comments that other people made. You can
-delete any comments that you made, but you can't delete comments anybody else made.
-```
-
-After this prompt is entered, you should see Claude Code kick off the planning and spec drafting process. Claude Code will also trigger some of the built-in scripts to set up the repository.
-
-Once this step is completed, you should have a new branch created (e.g., `001-create-taskify`), as well as a new specification in the `specs/001-create-taskify` directory.
-
-The produced specification should contain a set of user stories and functional requirements, as defined in the template.
-
-At this stage, your project folder contents should resemble the following:
-
-```text
-└── .specify
-    ├── memory
-    │  └── constitution.md
-    ├── scripts
-    │  ├── check-prerequisites.sh
-    │  ├── common.sh
-    │  ├── create-new-feature.sh
-    │  ├── setup-plan.sh
-    │  └── update-claude-md.sh
-    ├── specs
-    │  └── 001-create-taskify
-    │      └── spec.md
-    └── templates
-        ├── plan-template.md
-        ├── spec-template.md
-        └── tasks-template.md
-```
-
-### **STEP 3:** Functional specification clarification (required before planning)
-
-With the baseline specification created, you can go ahead and clarify any of the requirements that were not captured properly within the first shot attempt.
-
-You should run the structured clarification workflow **before** creating a technical plan to reduce rework downstream.
-
-Preferred order:
-
-1. Use `/speckit.clarify` (structured) – sequential, coverage-based questioning that records answers in a Clarifications section.
-2. Optionally follow up with ad-hoc free-form refinement if something still feels vague.
-
-If you intentionally want to skip clarification (e.g., spike or exploratory prototype), explicitly state that so the agent doesn't block on missing clarifications.
-
-Example free-form refinement prompt (after `/speckit.clarify` if still needed):
-
-```text
-For each sample project or project that you create there should be a variable number of tasks between 5 and 15
-tasks for each one randomly distributed into different states of completion. Make sure that there's at least
-one task in each stage of completion.
-```
-
-You should also ask Claude Code to validate the **Review & Acceptance Checklist**, checking off the things that are validated/pass the requirements, and leave the ones that are not unchecked. The following prompt can be used:
-
-```text
-Read the review and acceptance checklist, and check off each item in the checklist if the feature spec meets the criteria. Leave it empty if it does not.
-```
-
-It's important to use the interaction with Claude Code as an opportunity to clarify and ask questions around the specification - **do not treat its first attempt as final**.
-
-### **STEP 4:** Generate a plan
-
-You can now be specific about the tech stack and other technical requirements. You can use the `/speckit.plan` command that is built into the project template with a prompt like this:
-
-```text
-We are going to generate this using .NET Aspire, using Postgres as the database. The frontend should use
-Blazor server with drag-and-drop task boards, real-time updates. There should be a REST API created with a projects API,
-tasks API, and a notifications API.
-```
-
-The output of this step will include a number of implementation detail documents, with your directory tree resembling this:
-
-```text
-.
-├── CLAUDE.md
-├── memory
-│  └── constitution.md
-├── scripts
-│  ├── check-prerequisites.sh
-│  ├── common.sh
-│  ├── create-new-feature.sh
-│  ├── setup-plan.sh
-│  └── update-claude-md.sh
-├── specs
-│  └── 001-create-taskify
-│      ├── contracts
-│      │  ├── api-spec.json
-│      │  └── signalr-spec.md
-│      ├── data-model.md
-│      ├── plan.md
-│      ├── quickstart.md
-│      ├── research.md
-│      └── spec.md
-└── templates
-    ├── CLAUDE-template.md
-    ├── plan-template.md
-    ├── spec-template.md
-    └── tasks-template.md
-```
-
-Check the `research.md` document to ensure that the right tech stack is used, based on your instructions. You can ask Claude Code to refine it if any of the components stand out, or even have it check the locally-installed version of the platform/framework you want to use (e.g., .NET).
-
-Additionally, you might want to ask Claude Code to research details about the chosen tech stack if it's something that is rapidly changing (e.g., .NET Aspire, JS frameworks), with a prompt like this:
-
-```text
-I want you to go through the implementation plan and implementation details, looking for areas that could
-benefit from additional research as .NET Aspire is a rapidly changing library. For those areas that you identify that
-require further research, I want you to update the research document with additional details about the specific
-versions that we are going to be using in this Taskify application and spawn parallel research tasks to clarify
-any details using research from the web.
-```
-
-During this process, you might find that Claude Code gets stuck researching the wrong thing - you can help nudge it in the right direction with a prompt like this:
-
-```text
-I think we need to break this down into a series of steps. First, identify a list of tasks
-that you would need to do during implementation that you're not sure of or would benefit
-from further research. Write down a list of those tasks. And then for each one of these tasks,
-I want you to spin up a separate research task so that the net results is we are researching
-all of those very specific tasks in parallel. What I saw you doing was it looks like you were
-researching .NET Aspire in general and I don't think that's gonna do much for us in this case.
-That's way too untargeted research. The research needs to help you solve a specific targeted question.
-```
-
->[!NOTE]
->Claude Code might be over-eager and add components that you did not ask for. Ask it to clarify the rationale and the source of the change.
-
-### **STEP 5:** Have Claude Code validate the plan
-
-With the plan in place, you should have Claude Code run through it to make sure that there are no missing pieces. You can use a prompt like this:
-
-```text
-Now I want you to go and audit the implementation plan and the implementation detail files.
-Read through it with an eye on determining whether or not there is a sequence of tasks that you need
-to be doing that are obvious from reading this. Because I don't know if there's enough here. For example,
-when I look at the core implementation, it would be useful to reference the appropriate places in the implementation
-details where it can find the information as it walks through each step in the core implementation or in the refinement.
-```
-
-This helps refine the implementation plan and helps you avoid potential blind spots that Claude Code missed in its planning cycle. Once the initial refinement pass is complete, ask Claude Code to go through the checklist once more before you can get to the implementation.
-
-You can also ask Claude Code (if you have the [GitHub CLI](https://docs.github.com/en/github-cli/github-cli) installed) to go ahead and create a pull request from your current branch to `main` with a detailed description, to make sure that the effort is properly tracked.
-
->[!NOTE]
->Before you have the agent implement it, it's also worth prompting Claude Code to cross-check the details to see if there are any over-engineered pieces (remember - it can be over-eager). If over-engineered components or decisions exist, you can ask Claude Code to resolve them. Ensure that Claude Code follows the [constitution](base/memory/constitution.md) as the foundational piece that it must adhere to when establishing the plan.
-
-### **STEP 6:** Generate task breakdown with /speckit.tasks
-
-With the implementation plan validated, you can now break down the plan into specific, actionable tasks that can be executed in the correct order. Use the `/speckit.tasks` command to automatically generate a detailed task breakdown from your implementation plan:
-
-```text
-/speckit.tasks
-```
-
-This step creates a `tasks.md` file in your feature specification directory that contains:
-
-- **Task breakdown organized by user story** - Each user story becomes a separate implementation phase with its own set of tasks
-- **Dependency management** - Tasks are ordered to respect dependencies between components (e.g., models before services, services before endpoints)
-- **Parallel execution markers** - Tasks that can run in parallel are marked with `[P]` to optimize development workflow
-- **File path specifications** - Each task includes the exact file paths where implementation should occur
-- **Test-driven development structure** - If tests are requested, test tasks are included and ordered to be written before implementation
-- **Checkpoint validation** - Each user story phase includes checkpoints to validate independent functionality
-
-The generated tasks.md provides a clear roadmap for the `/speckit.implement` command, ensuring systematic implementation that maintains code quality and allows for incremental delivery of user stories.
-
-### **STEP 7:** Implementation
-
-Once ready, use the `/speckit.implement` command to execute your implementation plan:
-
-```text
-/speckit.implement
-```
-
-The `/speckit.implement` command will:
-
-- Validate that all prerequisites are in place (constitution, spec, plan, and tasks)
-- Parse the task breakdown from `tasks.md`
-- Execute tasks in the correct order, respecting dependencies and parallel execution markers
-- Follow the TDD approach defined in your task plan
-- Provide progress updates and handle errors appropriately
-
->[!IMPORTANT]
->The AI agent will execute local CLI commands (such as `dotnet`, `npm`, etc.) - make sure you have the required tools installed on your machine.
-
-Once the implementation is complete, test the application and resolve any runtime errors that may not be visible in CLI logs (e.g., browser console errors). You can copy and paste such errors back to your AI agent for resolution.
-
-</details>
-
----
-
-## 🔍 Troubleshooting
-
-### Git Credential Manager on Linux
-
-If you're having issues with Git authentication on Linux, you can install Git Credential Manager:
-
-```bash
-#!/usr/bin/env bash
-set -e
-echo "Downloading Git Credential Manager v2.6.1..."
-wget https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.6.1/gcm-linux_amd64.2.6.1.deb
-echo "Installing Git Credential Manager..."
-sudo dpkg -i gcm-linux_amd64.2.6.1.deb
-echo "Configuring Git to use GCM..."
-git config --global credential.helper manager
-echo "Cleaning up..."
-rm gcm-linux_amd64.2.6.1.deb
-```
-
-## 👥 Maintainers
-
+- **Repository**: [github.com/github/spec-kit](https://github.com/github/spec-kit)
+- **License**: MIT
+- **Maintainers**: 
 - Den Delimarsky ([@localden](https://github.com/localden))
 - John Lam ([@jflam](https://github.com/jflam))
+- **Contributors**: 61+ contributors to the original project
 
-## 💬 Support
+### SpecX Bot Enhancements
 
-For support, please open a [GitHub issue](https://github.com/hjk1995/spec-kit-role-persona/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
+SpecX Bot builds upon Spec Kit's foundation with:
 
-## 🙏 Acknowledgements
+- **Role-Based Persona System**: Multi-agent orchestration with specialized AI personas
+- **Development Strategy Selection**: Choose between Role-Based and Traditional approaches
+- **Custom Project Namespaces**: Avoid command conflicts across projects
+- **Enhanced CLI Experience**: Arrow-key navigation and streamlined workflows
+- **Extended Documentation**: Comprehensive guides for persona-based development
 
-This project is heavily influenced by and based on the work and research of [John Lam](https://github.com/jflam).
+**Thank you to the Spec Kit team and community for creating the foundation that makes SpecX Bot possible!**
+
+---
 
 ## 📄 License
 
-This project is licensed under the terms of the MIT open source license. Please refer to the [LICENSE](./LICENSE) file for the full terms.
+This project is licensed under the terms of the MIT open source license, consistent with the original [GitHub Spec Kit](https://github.com/github/spec-kit).
+
+See the [LICENSE](./LICENSE) file for full details.
+
+---
+
+## 💬 Support
+
+For support, please open a GitHub issue at [github.com/hjk1995/spec-kit-role-persona/issues](https://github.com/hjk1995/spec-kit-role-persona/issues).
+
+We welcome:
+- 🐛 Bug reports
+- ✨ Feature requests
+- 💡 Questions about using SpecX Bot
+- 🤝 Contributions and pull requests
+
+---
+
+## 🚀 What's Next?
+
+1. **Install SpecX Bot**: `uv tool install specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git`
+2. **Initialize Your Project**: `specx init myproject`
+3. **Choose Your Strategy**: Role-Based or Traditional
+4. **Select Your Personas**: Build your virtual team
+5. **Start Developing**: `/speckit-specify "Your first feature"` (or `/<your-namespace>-specify`)
+
+**Happy Spec-Driven Development with SpecX Bot!** 🎉
+
+---
+
+<div align="center">
+
+**[Installation](#installation)** • **[Quick Start](#quick-start)** • **[Commands](#commands)** • **[Personas](#role-personas)** • **[Support](#support)**
+
+Made with ❤️ by the SpecX Bot community • Powered by [GitHub Spec Kit](https://github.com/github/spec-kit)
+
+</div>

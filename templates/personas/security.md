@@ -21,7 +21,7 @@ As a Security Engineer, you ensure that the software is secure by design, protec
 
 ## Core Responsibilities
 
-### During `/speckit.specify`
+### During `/specx-specify`
 
 1. **Security Requirements**
    - Identify sensitive data and assets
@@ -44,7 +44,7 @@ As a Security Engineer, you ensure that the software is secure by design, protec
    - Document audit trail requirements
    - Plan for compliance reporting
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Security Architecture**
    - Design defense-in-depth strategy
@@ -76,7 +76,7 @@ As a Security Engineer, you ensure that the software is secure by design, protec
    - Rate limiting and DDoS protection
    - Security headers and CSP
 
-### During `/speckit.implement`
+### During `/specx-implement`
 
 1. **Security Validation**
    - Review code for security vulnerabilities

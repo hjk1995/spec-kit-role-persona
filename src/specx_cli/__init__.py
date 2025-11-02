@@ -10,18 +10,23 @@
 # ]
 # ///
 """
-Specify CLI - Setup tool for Specify projects with Role Personas
+SpecX CLI - AI-powered Spec-Driven Development with Role Personas
+
+SpecX Bot is a fork of GitHub Spec Kit with enhanced multi-agent orchestration.
 
 Usage:
-    uvx specify-cli.py init <project-name>
-    uvx specify-cli.py init .
-    uvx specify-cli.py init --here
+    uvx specx-cli.py init <project-name>
+    uvx specx-cli.py init .
+    uvx specx-cli.py init --here
 
 Or install globally:
-    uv tool install --from specify-cli.py specify-cli
-    specify-role init <project-name>
-    specify-role init .
-    specify-role init --here
+    uv tool install specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+    specx init <project-name>
+    specx init .
+    specx init --here
+
+Credits:
+    Forked from GitHub Spec Kit: https://github.com/github/spec-kit
 """
 
 import os
@@ -206,15 +211,15 @@ PERSONA_CONFIG = {
 CLAUDE_LOCAL_PATH = Path.home() / ".claude" / "local" / "claude"
 
 BANNER = """
-███████╗██████╗ ███████╗ ██████╗██╗███████╗██╗   ██╗
-██╔════╝██╔══██╗██╔════╝██╔════╝██║██╔════╝╚██╗ ██╔╝
-███████╗██████╔╝█████╗  ██║     ██║█████╗   ╚████╔╝ 
-╚════██║██╔═══╝ ██╔══╝  ██║     ██║██╔══╝    ╚██╔╝  
-███████║██║     ███████╗╚██████╗██║██║        ██║   
-╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝╚═╝        ╚═╝   
+███████╗██████╗ ███████╗ ██████╗██╗  ██╗
+██╔════╝██╔══██╗██╔════╝██╔════╝╚██╗██╔╝
+███████╗██████╔╝█████╗  ██║      ╚███╔╝ 
+╚════██║██╔═══╝ ██╔══╝  ██║      ██╔██╗ 
+███████║██║     ███████╗╚██████╗██╔╝ ██╗
+╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝  ╚═╝
 """
 
-TAGLINE = "GitHub Spec Kit - Spec-Driven Development Toolkit"
+TAGLINE = "SpecX Bot - AI-Powered Spec-Driven Development with Role Personas"
 class StepTracker:
     """Track and render hierarchical steps without emojis, similar to Claude Code tree output.
     Supports live auto-refresh via an attached refresh callback.
@@ -484,6 +489,40 @@ def multi_select_with_arrows(options: dict, prompt_text: str = "Select options",
 
 console = Console()
 
+def get_development_strategy() -> str:
+    """
+    Ask user to choose between persona-based or traditional development strategy using arrow keys.
+    
+    Returns:
+        'persona' or 'traditional'
+    """
+    console.print("\n[bold cyan]Development Strategy[/bold cyan]")
+    console.print("Choose your development approach:\n")
+    
+    strategies = {
+        "persona": "Role-Based (Recommended) - Multi-persona collaborative development with specialized expertise",
+        "traditional": "Traditional - Single AI agent handles all tasks, simpler and faster"
+    }
+    
+    strategy_choice = select_with_arrows(
+        strategies,
+        "Select development strategy (or press Enter for Role-Based):",
+        default_key="persona"
+    )
+    
+    if strategy_choice == "persona":
+        console.print("[green]✓[/green] Using [bold]Role-Based[/bold] development strategy")
+        console.print("[dim]   • Specialized AI personas (BA, SA, TL, etc.)[/dim]")
+        console.print("[dim]   • Comprehensive documentation and planning[/dim]")
+        console.print("[dim]   • Best for complex projects and team collaboration[/dim]")
+    else:
+        console.print("[green]✓[/green] Using [bold]Traditional[/bold] development strategy")
+        console.print("[dim]   • Single AI agent approach[/dim]")
+        console.print("[dim]   • Simpler setup, faster iteration[/dim]")
+        console.print("[dim]   • Best for quick prototypes and solo development[/dim]")
+    
+    return strategy_choice
+
 def get_project_namespace() -> str:
     """
     Get project namespace from user input with validation.
@@ -604,10 +643,11 @@ def generate_agent_commands(project_path: Path, ai_assistant: str, script_type: 
             # Replace placeholders in body
             body = body.replace('{SCRIPT}', script_command)
             body = body.replace('$ARGUMENTS', agent_cfg["arg_format"])
-            body = body.replace('/speckit.', f'/{namespace}.')
+            body = body.replace('/specx-', f'/{namespace}-')
             
-            # Generate output file
-            output_filename = template_file.stem + agent_cfg["ext"]
+            # Generate output file with namespace prefix
+            # Always prefix commands with namespace (e.g., "speckit-specify.md" or "myapp-specify.md")
+            output_filename = f"{namespace}-{template_file.stem}" + agent_cfg["ext"]
             output_path = agent_dir / output_filename
             
             # Create output content based on format
@@ -631,7 +671,7 @@ def generate_agent_commands(project_path: Path, ai_assistant: str, script_type: 
 
 def replace_namespace_in_commands(project_path: Path, namespace: str = "speckit") -> None:
     """
-    Replace /speckit. references with the custom namespace in all command files.
+    Replace /specx- references with the custom namespace in all command files.
     
     Args:
         project_path: Path to the project root
@@ -671,8 +711,8 @@ def replace_namespace_in_commands(project_path: Path, namespace: str = "speckit"
                     with open(file_path, 'r', encoding='utf-8') as f:
                         content = f.read()
                     
-                    # Replace /speckit. with /<namespace>.
-                    updated_content = content.replace('/speckit.', f'/{namespace}.')
+                    # Replace /specx- with /<namespace>-
+                    updated_content = content.replace('/specx-', f'/{namespace}-')
                     
                     # Only write if content changed
                     if updated_content != content:
@@ -681,7 +721,7 @@ def replace_namespace_in_commands(project_path: Path, namespace: str = "speckit"
                 except Exception as e:
                     console.print(f"[yellow]Warning: Could not update namespace in {file_path}: {e}[/yellow]")
 
-def create_persona_config(project_path: Path, selected_personas: list, namespace: str = "speckit") -> None:
+def create_persona_config(project_path: Path, selected_personas: list, namespace: str = "speckit", strategy: str = "persona") -> None:
     """
     Create persona configuration file in .specify directory.
     
@@ -689,6 +729,7 @@ def create_persona_config(project_path: Path, selected_personas: list, namespace
         project_path: Path to the project root
         selected_personas: List of selected persona IDs
         namespace: Project namespace for spec commands
+        strategy: Development strategy ('persona' or 'traditional')
     """
     specify_dir = project_path / ".specify"
     specify_dir.mkdir(parents=True, exist_ok=True)
@@ -698,13 +739,14 @@ def create_persona_config(project_path: Path, selected_personas: list, namespace
     config = {
         "version": "1.0",
         "namespace": namespace,
+        "strategy": strategy,
         "personas": {
-            "enabled": selected_personas,
+            "enabled": selected_personas if strategy == "persona" else [],
             "available": list(PERSONA_CONFIG.keys())
         },
         "orchestration": {
-            "parallel_execution": True,
-            "max_concurrent_personas": 3
+            "parallel_execution": True if strategy == "persona" else False,
+            "max_concurrent_personas": 3 if strategy == "persona" else 1
         }
     }
     
@@ -803,7 +845,7 @@ def callback(ctx: typer.Context):
     """Show banner when no subcommand is provided."""
     if ctx.invoked_subcommand is None and "--help" not in sys.argv and "-h" not in sys.argv:
         show_banner()
-        console.print(Align.center("[dim]Run 'specify --help' for usage information[/dim]"))
+        console.print(Align.center("[dim]Run 'specx --help' for usage information[/dim]"))
         console.print()
 
 def run_command(cmd: list[str], check_return: bool = True, capture: bool = False, shell: bool = False) -> Optional[str]:
@@ -1450,28 +1492,30 @@ def init(
     github_token: str = typer.Option(None, "--github-token", help="GitHub token to use for API requests (or set GH_TOKEN or GITHUB_TOKEN environment variable)"),
 ):
     """
-    Initialize a new Specify project from the latest template.
+    Initialize a new SpecX Bot project from the latest template.
     
     This command will:
     1. Check that required tools are installed (git is optional)
     2. Let you choose your AI assistant
-    3. Download the appropriate template from GitHub
-    4. Extract the template to a new project directory or current directory
-    5. Initialize a fresh git repository (if not --no-git and no existing repo)
-    6. Optionally set up AI assistant commands
+    3. Select development strategy (Role-Based or Traditional)
+    4. Configure project namespace (Role-Based only)
+    5. Select role personas (Role-Based only)
+    6. Download the appropriate template from GitHub
+    7. Extract the template to a new project directory or current directory
+    8. Generate agent-specific commands with your namespace
+    9. Initialize a fresh git repository (if not --no-git and no existing repo)
     
     Examples:
-        specify init my-project
-        specify init my-project --ai claude
-        specify init my-project --ai copilot --no-git
-        specify init --ignore-agent-tools my-project
-        specify init . --ai claude         # Initialize in current directory
-        specify init .                     # Initialize in current directory (interactive AI selection)
-        specify init --here --ai claude    # Alternative syntax for current directory
-        specify init --here --ai codex
-        specify init --here --ai codebuddy
-        specify init --here
-        specify init --here --force  # Skip confirmation when current directory not empty
+        specx init my-project
+        specx init my-project --ai cursor-agent
+        specx init my-project --ai claude --no-git
+        specx init --ignore-agent-tools my-project
+        specx init . --ai claude         # Initialize in current directory
+        specx init .                     # Initialize in current directory (interactive AI selection)
+        specx init --here --ai claude    # Alternative syntax for current directory
+        specx init --here --ai copilot
+        specx init --here
+        specx init --here --force  # Skip confirmation when current directory not empty
     """
 
     show_banner()
@@ -1585,33 +1629,51 @@ def init(
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
     console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
 
-    # Project namespace selection
+    # Development strategy selection
     if sys.stdin.isatty():
-        namespace = get_project_namespace()
+        strategy = get_development_strategy()
     else:
-        # Non-interactive mode: use default
+        # Non-interactive mode: use persona-based by default
+        strategy = "persona"
+    
+    console.print(f"[cyan]Development strategy:[/cyan] {strategy}")
+
+    # Project namespace selection (only for role-based strategy)
+    if strategy == "persona":
+        if sys.stdin.isatty():
+            namespace = get_project_namespace()
+        else:
+            # Non-interactive mode: use default
+            namespace = "speckit"
+        
+        console.print(f"[cyan]Project namespace:[/cyan] {namespace}")
+    else:
+        # Traditional strategy uses default namespace
         namespace = "speckit"
-    
-    console.print(f"[cyan]Project namespace:[/cyan] {namespace}")
+        console.print(f"[cyan]Project namespace:[/cyan] {namespace} (default for traditional mode)")
 
-    # Persona selection
-    persona_options = {key: f"{config['name']} - {config['description']}" 
-                      for key, config in PERSONA_CONFIG.items()}
-    default_personas = [key for key, config in PERSONA_CONFIG.items() if config.get('default', False)]
-    
-    if sys.stdin.isatty():
-        selected_personas = multi_select_with_arrows(
-            persona_options,
-            "Select role personas for your project:",
-            defaults=default_personas
-        )
+    # Persona selection (only if using persona-based strategy)
+    selected_personas = []
+    if strategy == "persona":
+        persona_options = {key: f"{config['name']} - {config['description']}" 
+                          for key, config in PERSONA_CONFIG.items()}
+        default_personas = [key for key, config in PERSONA_CONFIG.items() if config.get('default', False)]
+        
+        if sys.stdin.isatty():
+            selected_personas = multi_select_with_arrows(
+                persona_options,
+                "Select role personas for your project:",
+                defaults=default_personas
+            )
+        else:
+            # Non-interactive mode: use defaults
+            selected_personas = default_personas
+        
+        console.print(f"[cyan]Selected personas:[/cyan] {', '.join([PERSONA_CONFIG[p]['name'] for p in selected_personas])}")
     else:
-        # Non-interactive mode: use defaults
-        selected_personas = default_personas
-    
-    console.print(f"[cyan]Selected personas:[/cyan] {', '.join([PERSONA_CONFIG[p]['name'] for p in selected_personas])}")
+        console.print(f"[cyan]Persona system:[/cyan] Disabled (using traditional single-agent approach)")
 
-    tracker = StepTracker("Initialize Specify Project")
+    tracker = StepTracker("Initialize SpecX Bot Project")
 
     sys._specify_tracker_active = True
 
@@ -1621,10 +1683,13 @@ def init(
     tracker.complete("ai-select", f"{selected_ai}")
     tracker.add("script-select", "Select script type")
     tracker.complete("script-select", selected_script)
-    tracker.add("namespace-select", "Set project namespace")
-    tracker.complete("namespace-select", namespace)
-    tracker.add("persona-select", "Select role personas")
-    tracker.complete("persona-select", f"{len(selected_personas)} selected")
+    tracker.add("strategy-select", "Select development strategy")
+    tracker.complete("strategy-select", strategy)
+    if strategy == "persona":
+        tracker.add("namespace-select", "Set project namespace")
+        tracker.complete("namespace-select", namespace)
+        tracker.add("persona-select", "Select role personas")
+        tracker.complete("persona-select", f"{len(selected_personas)} selected")
     for key, label in [
         ("fetch", "Fetch latest release"),
         ("download", "Download template"),
@@ -1668,14 +1733,17 @@ def init(
             except Exception as e:
                 tracker.error("commands", f"generation failed: {str(e)}")
 
-            # Setup personas
-            tracker.start("personas")
-            try:
-                copy_persona_files(project_path, selected_personas)
-                create_persona_config(project_path, selected_personas, namespace)
-                tracker.complete("personas", f"{len(selected_personas)} personas configured")
-            except Exception as e:
-                tracker.error("personas", f"setup failed: {str(e)}")
+            # Setup personas (only if using persona-based strategy)
+            if strategy == "persona" and selected_personas:
+                tracker.start("personas")
+                try:
+                    copy_persona_files(project_path, selected_personas)
+                    create_persona_config(project_path, selected_personas, namespace, strategy)
+                    tracker.complete("personas", f"{len(selected_personas)} personas configured")
+                except Exception as e:
+                    tracker.error("personas", f"setup failed: {str(e)}")
+            else:
+                tracker.skip("personas", "traditional mode")
 
             if not no_git:
                 tracker.start("git")
@@ -1768,11 +1836,11 @@ def init(
 
     steps_lines.append(f"{step_num}. Start using slash commands with your AI agent:")
 
-    steps_lines.append("   2.1 [cyan]/speckit.constitution[/] - Establish project principles")
-    steps_lines.append("   2.2 [cyan]/speckit.specify[/] - Create baseline specification")
-    steps_lines.append("   2.3 [cyan]/speckit.plan[/] - Create implementation plan")
-    steps_lines.append("   2.4 [cyan]/speckit.tasks[/] - Generate actionable tasks")
-    steps_lines.append("   2.5 [cyan]/speckit.implement[/] - Execute implementation")
+    steps_lines.append(f"   2.1 [cyan]/{namespace}-constitution[/] - Establish project principles")
+    steps_lines.append(f"   2.2 [cyan]/{namespace}-specify[/] - Create baseline specification")
+    steps_lines.append(f"   2.3 [cyan]/{namespace}-plan[/] - Create implementation plan")
+    steps_lines.append(f"   2.4 [cyan]/{namespace}-tasks[/] - Generate actionable tasks")
+    steps_lines.append(f"   2.5 [cyan]/{namespace}-implement[/] - Execute implementation")
 
     steps_panel = Panel("\n".join(steps_lines), title="Next Steps", border_style="cyan", padding=(1,2))
     console.print()
@@ -1781,9 +1849,9 @@ def init(
     enhancement_lines = [
         "Optional commands that you can use for your specs [bright_black](improve quality & confidence)[/bright_black]",
         "",
-        f"○ [cyan]/speckit.clarify[/] [bright_black](optional)[/bright_black] - Ask structured questions to de-risk ambiguous areas before planning (run before [cyan]/speckit.plan[/] if used)",
-        f"○ [cyan]/speckit.analyze[/] [bright_black](optional)[/bright_black] - Cross-artifact consistency & alignment report (after [cyan]/speckit.tasks[/], before [cyan]/speckit.implement[/])",
-        f"○ [cyan]/speckit.checklist[/] [bright_black](optional)[/bright_black] - Generate quality checklists to validate requirements completeness, clarity, and consistency (after [cyan]/speckit.plan[/])"
+        f"○ [cyan]/{namespace}-clarify[/] [bright_black](optional)[/bright_black] - Ask structured questions to de-risk ambiguous areas before planning (run before [cyan]/{namespace}-plan[/] if used)",
+        f"○ [cyan]/{namespace}-analyze[/] [bright_black](optional)[/bright_black] - Cross-artifact consistency & alignment report (after [cyan]/{namespace}-tasks[/], before [cyan]/{namespace}-implement[/])",
+        f"○ [cyan]/{namespace}-checklist[/] [bright_black](optional)[/bright_black] - Generate quality checklists to validate requirements completeness, clarity, and consistency (after [cyan]/{namespace}-plan[/])"
     ]
     enhancements_panel = Panel("\n".join(enhancement_lines), title="Enhancement Commands", border_style="cyan", padding=(1,2))
     console.print()

@@ -21,7 +21,7 @@ As a UX Designer, you ensure that the software is intuitive, accessible, and del
 
 ## Core Responsibilities
 
-### During `/speckit.specify`
+### During `/specx-specify`
 
 1. **User Experience Requirements**
    - Identify user personas and their goals
@@ -44,7 +44,7 @@ As a UX Designer, you ensure that the software is intuitive, accessible, and del
    - Define user satisfaction metrics (NPS, CSAT)
    - Set learnability and efficiency goals
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Interaction Design**
    - Design user flows and navigation patterns
@@ -74,7 +74,7 @@ As a UX Designer, you ensure that the software is intuitive, accessible, and del
    - Define spacing and layout grids
    - Consider branding and style guidelines
 
-### During `/speckit.implement`
+### During `/specx-implement`
 
 1. **UX Validation**
    - Verify user flows work as designed

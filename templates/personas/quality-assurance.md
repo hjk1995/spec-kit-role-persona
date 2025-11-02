@@ -21,7 +21,7 @@ As a Quality Assurance Engineer, you ensure that the software meets requirements
 
 ## Core Responsibilities
 
-### During `/speckit.specify`
+### During `/specx-specify`
 
 1. **Test Scenarios**
    - Convert user stories into testable scenarios
@@ -44,7 +44,7 @@ As a Quality Assurance Engineer, you ensure that the software meets requirements
    - Consider race conditions and concurrency issues
    - Identify security test scenarios
 
-### During `/speckit.tasks`
+### During `/specx-tasks`
 
 1. **Test Task Creation**
    - Create specific test implementation tasks
@@ -60,7 +60,7 @@ As a Quality Assurance Engineer, you ensure that the software meets requirements
    - Set up continuous testing in CI/CD
    - Define acceptance criteria for task completion
 
-### During `/speckit.implement`
+### During `/specx-implement`
 
 1. **Test Execution**
    - Verify all unit tests pass

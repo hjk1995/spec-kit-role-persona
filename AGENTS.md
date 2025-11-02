@@ -1,10 +1,10 @@
 # AGENTS.md
 
-## About Spec Kit and Specify
+## About SpecX Bot and Specify
 
-**GitHub Spec Kit** is a comprehensive toolkit for implementing Spec-Driven Development (SDD) - a methodology that emphasizes creating clear specifications before implementation. The toolkit includes templates, scripts, and workflows that guide development teams through a structured approach to building software.
+**GitHub SpecX Bot** is a comprehensive toolkit for implementing Spec-Driven Development (SDD) - a methodology that emphasizes creating clear specifications before implementation. The toolkit includes templates, scripts, and workflows that guide development teams through a structured approach to building software.
 
-**Specify CLI** is the command-line interface that bootstraps projects with the Spec Kit framework. It sets up the necessary directory structures, templates, and AI agent integrations to support the Spec-Driven Development workflow.
+**SpecX CLI** is the command-line interface that bootstraps projects with the SpecX Bot framework. It sets up the necessary directory structures, templates, and AI agent integrations to support the Spec-Driven Development workflow.
 
 The toolkit supports multiple AI coding assistants, allowing teams to use their preferred tools while maintaining consistent project structure and development practices.
 
@@ -12,11 +12,11 @@ The toolkit supports multiple AI coding assistants, allowing teams to use their 
 
 ## General practices
 
-- Any changes to `__init__.py` for the Specify CLI require a version rev in `pyproject.toml` and addition of entries to `CHANGELOG.md`.
+- Any changes to `__init__.py` for the SpecX CLI require a version rev in `pyproject.toml` and addition of entries to `CHANGELOG.md`.
 
 ## Adding New Agent Support
 
-This section explains how to add support for new AI agents/assistants to the Specify CLI. Use this guide as a reference when integrating new AI tools into the Spec-Driven Development workflow.
+This section explains how to add support for new AI agents/assistants to the SpecX CLI. Use this guide as a reference when integrating new AI tools into the Spec-Driven Development workflow.
 
 ### Overview
 
@@ -365,7 +365,7 @@ Different agents use different argument placeholders:
 ## Testing New Agent Integration
 
 1. **Build test**: Run package creation script locally
-2. **CLI test**: Test `specify init --ai <agent>` command
+2. **CLI test**: Test `specx init --ai <agent>` command
 3. **File generation**: Verify correct directory structure and files
 4. **Command validation**: Ensure generated commands work with the agent
 5. **Context update**: Test agent context update scripts
@@ -391,7 +391,7 @@ The Role Personas system is a major feature that brings specialized AI agent pro
 
 1. **Persona Definitions**: Markdown files with YAML frontmatter in `templates/personas/`
 2. **Persona Configuration**: JSON configuration in `.specify/config.json`
-3. **Multi-Select UI**: Interactive persona selection during `specify init`
+3. **Multi-Select UI**: Interactive persona selection during `specx init`
 4. **Orchestration**: Main AI agent coordinates multiple persona sub-agents
 
 **File Structure**:
@@ -645,7 +645,7 @@ Users can customize personas in several ways:
 
 The persona system is designed to be fully backward compatible:
 
-- Persona system is opt-in during `specify init`
+- Persona system is opt-in during `specx init`
 - Existing projects without personas continue to work normally
 - Commands gracefully handle missing persona configurations
 - Default behavior (no personas) matches pre-persona functionality

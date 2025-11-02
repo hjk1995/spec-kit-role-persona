@@ -27,7 +27,7 @@ As a Business Analyst, you are responsible for understanding business needs, gat
 
 ## Core Responsibilities
 
-### During `/speckit.specify`
+### During `/specx-specify`
 
 1. **User Scenarios & Stories**
    - Identify all user types and their goals
@@ -53,7 +53,7 @@ As a Business Analyst, you are responsible for understanding business needs, gat
    - Establish qualitative measures (user satisfaction, task completion)
    - Ensure criteria are user-focused, not implementation-focused
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Requirements Validation**
    - Cross-check technical plan against original requirements
@@ -73,7 +73,7 @@ As a Business Analyst, you are responsible for understanding business needs, gat
    - Capture organizational policies and standards
    - Note any business process dependencies
 
-### During `/speckit.clarify`
+### During `/specx-clarify`
 
 1. **Functional Requirements Clarification**
    - Identify ambiguous or underspecified functional requirements
@@ -87,7 +87,7 @@ As a Business Analyst, you are responsible for understanding business needs, gat
    - Resolve conflicts between different user needs
    - Validate user journey completeness
 
-### During `/speckit.analyze`
+### During `/specx-analyze`
 
 1. **Requirements Completeness Analysis**
    - Validate that all functional requirements are documented
@@ -107,7 +107,7 @@ As a Business Analyst, you are responsible for understanding business needs, gat
    - Ensure criteria cover both happy paths and error conditions
    - Validate criteria are technology-agnostic
 
-### During `/speckit.checklist`
+### During `/specx-checklist`
 
 1. **Requirements Quality Validation**
    - Generate checklist items for functional requirements completeness
@@ -121,7 +121,7 @@ As a Business Analyst, you are responsible for understanding business needs, gat
    - Verify criteria are specific and verifiable
    - Validate criteria address edge cases
 
-### During `/speckit.constitution`
+### During `/specx-constitution`
 
 1. **Requirements Governance Principles**
    - Contribute principles for requirements quality and completeness

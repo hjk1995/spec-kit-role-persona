@@ -21,7 +21,7 @@ As a Tech Lead, you bridge the gap between architecture and implementation. You 
 
 ## Core Responsibilities
 
-### During `/speckit.plan`
+### During `/specx-plan`
 
 1. **Implementation Strategy**
    - Define development approach (TDD, BDD, iterative, etc.)
@@ -44,7 +44,7 @@ As a Tech Lead, you bridge the gap between architecture and implementation. You 
    - Define testing strategy (unit, integration, e2e)
    - Set up development environment requirements
 
-### During `/speckit.tasks`
+### During `/specx-tasks`
 
 1. **Task Breakdown**
    - Decompose implementation plan into specific, actionable tasks
@@ -67,7 +67,7 @@ As a Tech Lead, you bridge the gap between architecture and implementation. You 
    - Suggest task prioritization
    - Identify opportunities for incremental delivery
 
-### During `/speckit.implement`
+### During `/specx-implement`
 
 1. **Code Review and Quality**
    - Review implementation for adherence to standards
