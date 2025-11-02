@@ -484,13 +484,211 @@ def multi_select_with_arrows(options: dict, prompt_text: str = "Select options",
 
 console = Console()
 
-def create_persona_config(project_path: Path, selected_personas: list) -> None:
+def get_project_namespace() -> str:
+    """
+    Get project namespace from user input with validation.
+    
+    Returns:
+        Valid project namespace (single lowercase word)
+    """
+    while True:
+        console.print("\n[bold cyan]Project Namespace Configuration[/bold cyan]")
+        console.print("Enter a namespace for your project commands (e.g., 'myapp', 'project', 'api')")
+        console.print("[dim]Commands will be: /<namespace>-specify, /<namespace>-plan, /<namespace>-tasks, etc.[/dim]")
+        console.print("[dim]Press Enter for default: 'speckit'[/dim]\n")
+        
+        namespace = input("Project namespace: ").strip()
+        
+        # Use default if empty
+        if not namespace:
+            namespace = "speckit"
+            console.print(f"[green]✓[/green] Using default namespace: [bold]{namespace}[/bold]")
+            return namespace
+        
+        # Validate: single word, lowercase, alphanumeric with optional hyphens
+        if not namespace:
+            console.print("[red]Error:[/red] Namespace cannot be empty")
+            continue
+        
+        # Convert to lowercase
+        namespace = namespace.lower()
+        
+        # Check if it's a single word (no spaces)
+        if ' ' in namespace:
+            console.print("[red]Error:[/red] Namespace must be a single word (no spaces)")
+            continue
+        
+        # Check if it contains only valid characters (alphanumeric and hyphens)
+        import re
+        if not re.match(r'^[a-z0-9-]+$', namespace):
+            console.print("[red]Error:[/red] Namespace must contain only lowercase letters, numbers, and hyphens")
+            continue
+        
+        # Check if it starts with a letter
+        if not namespace[0].isalpha():
+            console.print("[red]Error:[/red] Namespace must start with a letter")
+            continue
+        
+        console.print(f"[green]✓[/green] Project namespace set to: [bold]{namespace}[/bold]")
+        console.print(f"[dim]Your commands: /{namespace}-specify, /{namespace}-plan, /{namespace}-tasks, /{namespace}-implement, etc.[/dim]")
+        return namespace
+
+def generate_agent_commands(project_path: Path, ai_assistant: str, script_type: str, namespace: str = "speckit") -> int:
+    """
+    Generate agent-specific command files from templates.
+    
+    Args:
+        project_path: Path to the project root
+        ai_assistant: AI assistant name (e.g., 'cursor-agent', 'claude', 'copilot')
+        script_type: Script type ('sh' or 'ps')
+        namespace: Project namespace for spec commands
+        
+    Returns:
+        Number of command files generated
+    """
+    # Agent-specific configuration
+    agent_config_map = {
+        "claude": {"dir": ".claude/commands", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "gemini": {"dir": ".gemini/commands", "ext": ".toml", "arg_format": "{{args}}"},
+        "copilot": {"dir": ".github/prompts", "ext": ".prompt.md", "arg_format": "$ARGUMENTS"},
+        "cursor-agent": {"dir": ".cursor/commands", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "qwen": {"dir": ".qwen/commands", "ext": ".toml", "arg_format": "{{args}}"},
+        "opencode": {"dir": ".opencode/command", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "windsurf": {"dir": ".windsurf/workflows", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "codex": {"dir": ".codex/prompts", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "kilocode": {"dir": ".kilocode/workflows", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "auggie": {"dir": ".augment/commands", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "roo": {"dir": ".roo/commands", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "codebuddy": {"dir": ".codebuddy/commands", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "q": {"dir": ".amazonq/prompts", "ext": ".md", "arg_format": "$ARGUMENTS"},
+        "amp": {"dir": ".agents/commands", "ext": ".md", "arg_format": "$ARGUMENTS"},
+    }
+    
+    agent_cfg = agent_config_map.get(ai_assistant)
+    if not agent_cfg:
+        return 0
+    
+    # Create agent-specific command directory
+    agent_dir = project_path / agent_cfg["dir"]
+    agent_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Find template commands
+    template_dir = project_path / "templates" / "commands"
+    if not template_dir.exists():
+        return 0
+    
+    generated_count = 0
+    
+    # Process each template
+    for template_file in template_dir.glob("*.md"):
+        try:
+            with open(template_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Parse YAML frontmatter
+            import re
+            frontmatter_match = re.match(r'^---\n(.*?)\n---\n(.*)$', content, re.DOTALL)
+            if not frontmatter_match:
+                continue
+            
+            frontmatter, body = frontmatter_match.groups()
+            
+            # Extract description
+            desc_match = re.search(r'^description:\s*(.+)$', frontmatter, re.MULTILINE)
+            description = desc_match.group(1).strip() if desc_match else ""
+            
+            # Extract script command for the selected script type
+            script_match = re.search(rf'^\s*{script_type}:\s*(.+)$', frontmatter, re.MULTILINE)
+            script_command = script_match.group(1).strip() if script_match else ""
+            
+            # Replace placeholders in body
+            body = body.replace('{SCRIPT}', script_command)
+            body = body.replace('$ARGUMENTS', agent_cfg["arg_format"])
+            body = body.replace('/speckit.', f'/{namespace}.')
+            
+            # Generate output file
+            output_filename = template_file.stem + agent_cfg["ext"]
+            output_path = agent_dir / output_filename
+            
+            # Create output content based on format
+            if agent_cfg["ext"] == ".toml":
+                # TOML format for Gemini/Qwen
+                output_content = f'description = "{description}"\n\nprompt = """\n{body}\n"""\n'
+            else:
+                # Markdown format
+                output_content = f'---\ndescription: {description}\n---\n\n{body}'
+            
+            # Write output file
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(output_content)
+            
+            generated_count += 1
+            
+        except Exception as e:
+            console.print(f"[yellow]Warning: Could not generate {template_file.name}: {e}[/yellow]")
+    
+    return generated_count
+
+def replace_namespace_in_commands(project_path: Path, namespace: str = "speckit") -> None:
+    """
+    Replace /speckit. references with the custom namespace in all command files.
+    
+    Args:
+        project_path: Path to the project root
+        namespace: Project namespace for spec commands
+    """
+    # Find all agent-specific command directories
+    agent_dirs = [
+        project_path / ".claude" / "commands",
+        project_path / ".gemini" / "commands",
+        project_path / ".github" / "prompts",
+        project_path / ".cursor" / "commands",
+        project_path / ".qwen" / "commands",
+        project_path / ".opencode" / "command",
+        project_path / ".windsurf" / "workflows",
+        project_path / ".codex" / "prompts",
+        project_path / ".kilocode" / "workflows",
+        project_path / ".augment" / "commands",
+        project_path / ".roo" / "commands",
+        project_path / ".codebuddy" / "commands",
+        project_path / ".amazonq" / "prompts",
+        project_path / ".agents" / "commands",
+    ]
+    
+    # Also check templates directory for command templates
+    template_commands = project_path / "templates" / "commands"
+    if template_commands.exists():
+        agent_dirs.append(template_commands)
+    
+    for agent_dir in agent_dirs:
+        if not agent_dir.exists():
+            continue
+        
+        # Process all markdown and toml files in the directory
+        for file_path in agent_dir.glob("*"):
+            if file_path.suffix in [".md", ".toml"]:
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    
+                    # Replace /speckit. with /<namespace>.
+                    updated_content = content.replace('/speckit.', f'/{namespace}.')
+                    
+                    # Only write if content changed
+                    if updated_content != content:
+                        with open(file_path, 'w', encoding='utf-8') as f:
+                            f.write(updated_content)
+                except Exception as e:
+                    console.print(f"[yellow]Warning: Could not update namespace in {file_path}: {e}[/yellow]")
+
+def create_persona_config(project_path: Path, selected_personas: list, namespace: str = "speckit") -> None:
     """
     Create persona configuration file in .specify directory.
     
     Args:
         project_path: Path to the project root
         selected_personas: List of selected persona IDs
+        namespace: Project namespace for spec commands
     """
     specify_dir = project_path / ".specify"
     specify_dir.mkdir(parents=True, exist_ok=True)
@@ -499,6 +697,7 @@ def create_persona_config(project_path: Path, selected_personas: list) -> None:
     
     config = {
         "version": "1.0",
+        "namespace": namespace,
         "personas": {
             "enabled": selected_personas,
             "available": list(PERSONA_CONFIG.keys())
@@ -531,23 +730,42 @@ def copy_persona_files(project_path: Path, selected_personas: list, template_sou
     personas_dir = project_path / "memory" / "personas"
     personas_dir.mkdir(parents=True, exist_ok=True)
     
+    # Check if persona files already exist in destination (from git clone)
+    # If they do, we don't need to copy them
+    all_personas_exist = all(
+        (personas_dir / f"{persona_id}.md").exists() 
+        for persona_id in selected_personas
+    )
+    
+    if all_personas_exist and (personas_dir / "README.md").exists():
+        # All files already in place (from git clone), no need to copy
+        return
+    
     # Copy selected persona files
     for persona_id in selected_personas:
         source_file = template_source / f"{persona_id}.md"
         dest_file = personas_dir / f"{persona_id}.md"
         
+        # Skip if file already exists in destination
+        if dest_file.exists():
+            continue
+            
         if source_file.exists():
-            shutil.copy2(source_file, dest_file)
+            # Only copy if source and destination are different
+            if source_file.resolve() != dest_file.resolve():
+                shutil.copy2(source_file, dest_file)
         else:
             console.print(f"[yellow]Warning: Persona file not found: {source_file}[/yellow]")
     
-    # Copy README if it exists
-    readme_source = project_path / "memory" / "personas" / "README.md"
+    # Copy README if it doesn't already exist
     readme_dest = personas_dir / "README.md"
-    if readme_source.exists():
-        shutil.copy2(readme_source, readme_dest)
-    else:
-        console.print(f"[yellow]Warning: Persona README not found: {readme_source}[/yellow]")
+    if not readme_dest.exists():
+        # Try templates directory first
+        template_readme = project_path / "templates" / "personas" / "README.md"
+        if template_readme.exists():
+            shutil.copy2(template_readme, readme_dest)
+        else:
+            console.print(f"[yellow]Warning: Persona README not found[/yellow]")
 
 class BannerGroup(TyperGroup):
     """Custom group that shows banner before help."""
@@ -1367,6 +1585,15 @@ def init(
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
     console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
 
+    # Project namespace selection
+    if sys.stdin.isatty():
+        namespace = get_project_namespace()
+    else:
+        # Non-interactive mode: use default
+        namespace = "speckit"
+    
+    console.print(f"[cyan]Project namespace:[/cyan] {namespace}")
+
     # Persona selection
     persona_options = {key: f"{config['name']} - {config['description']}" 
                       for key, config in PERSONA_CONFIG.items()}
@@ -1394,6 +1621,8 @@ def init(
     tracker.complete("ai-select", f"{selected_ai}")
     tracker.add("script-select", "Select script type")
     tracker.complete("script-select", selected_script)
+    tracker.add("namespace-select", "Set project namespace")
+    tracker.complete("namespace-select", namespace)
     tracker.add("persona-select", "Select role personas")
     tracker.complete("persona-select", f"{len(selected_personas)} selected")
     for key, label in [
@@ -1424,11 +1653,26 @@ def init(
 
             ensure_executable_scripts(project_path, tracker=tracker)
 
+            # Generate agent-specific commands
+            tracker.add("commands", "Generate agent commands")
+            tracker.start("commands")
+            try:
+                cmd_count = generate_agent_commands(project_path, selected_ai, selected_script, namespace)
+                if cmd_count > 0:
+                    tracker.complete("commands", f"{cmd_count} commands generated")
+                else:
+                    # Commands might already exist from release package
+                    tracker.complete("commands", "using existing commands")
+                    # Still need to update namespace in existing commands
+                    replace_namespace_in_commands(project_path, namespace)
+            except Exception as e:
+                tracker.error("commands", f"generation failed: {str(e)}")
+
             # Setup personas
             tracker.start("personas")
             try:
                 copy_persona_files(project_path, selected_personas)
-                create_persona_config(project_path, selected_personas)
+                create_persona_config(project_path, selected_personas, namespace)
                 tracker.complete("personas", f"{len(selected_personas)} personas configured")
             except Exception as e:
                 tracker.error("personas", f"setup failed: {str(e)}")

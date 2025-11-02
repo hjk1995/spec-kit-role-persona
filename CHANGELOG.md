@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Project Namespace**: Users can now set a custom namespace for project commands during `specify-role init`
+  - Interactive prompt asks for a single-word, lowercase namespace identifier
+  - Default namespace is "speckit" if no input provided
+  - Validates namespace format (lowercase, alphanumeric with hyphens, starts with letter)
+  - Stored in `.specify/config.json` for reference by AI agents
+  - Commands become: `/<namespace>-specify`, `/<namespace>-plan`, `/<namespace>-tasks`, `/<namespace>-implement`, etc.
+  - Example: namespace "myapp" creates commands `/myapp-specify`, `/myapp-plan`, etc.
+  - Helps avoid command conflicts between multiple projects
 - **Role Personas System**: Major new feature that brings specialized AI agent profiles to the Spec-Driven Development workflow
   - **9 Predefined Personas**: Business Analyst (BA), Solution Architect (SA), Tech Lead (TL), Quality Assurance (QA), DevOps Engineer, Security Engineer, UX Designer, Frontend Developer (FE), Backend Developer (BE)
   - **Interactive Multi-Select UI**: During `specify init`, users can select which personas to enable using arrow keys and space bar
@@ -48,10 +56,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Command Generation and Namespace**: Fixed issue where commands were not being installed or listed properly
+  - Added `generate_agent_commands()` function that creates agent-specific command files from templates during initialization
+  - Generates commands for all supported agents (Claude, Cursor, Copilot, Gemini, Qwen, etc.) with correct format (.md or .toml)
+  - Automatically applies custom namespace during command generation (e.g., `/myapp.specify` instead of `/speckit.specify`)
+  - Replaces `{SCRIPT}` placeholders with appropriate script commands (bash or PowerShell)
+  - Replaces `$ARGUMENTS` with agent-specific argument formats (`$ARGUMENTS` for Markdown, `{{args}}` for TOML)
+  - Falls back to updating existing commands if they're already present (from release packages)
+  - Commands now properly install and appear in AI agent command lists with the correct namespace
 - **Persona File Copying**: Fixed issue where persona files were not being copied during `specify-role init`
   - Changed source path from package templates to downloaded project templates directory
   - Added warning messages when persona files are not found
   - Persona files now correctly copied from `templates/personas/` to `memory/personas/`
+  - Fixed "same file" error when copying README.md that already exists in destination
+  - Added smart detection to skip copying files that are already in place (from git clone)
 - **No Releases Fallback**: Added automatic fallback to clone from main branch when no GitHub releases are available
   - CLI now clones directly from the repository when releases are not found (404 error)
   - Useful for development and forked repositories without published releases

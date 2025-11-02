@@ -127,6 +127,47 @@ Use **`/speckit.implement`** to execute all tasks and build your feature accordi
 
 For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
 
+## 🎯 Project Namespace
+
+Spec Kit allows you to customize the namespace for your project commands during initialization. This lets you create project-specific commands that match your workflow and avoid conflicts with other projects.
+
+**During `specify-role init`, you'll be prompted to set a project namespace:**
+
+```
+Project Namespace Configuration
+Enter a namespace for your project commands (e.g., 'myapp', 'project', 'api')
+Commands will be: /<namespace>-specify, /<namespace>-plan, /<namespace>-tasks, etc.
+Press Enter for default: 'speckit'
+
+Project namespace: myapp
+✓ Project namespace set to: myapp
+Your commands: /myapp-specify, /myapp-plan, /myapp-tasks, /myapp-implement, etc.
+```
+
+**Validation Rules:**
+- Must be a single word (no spaces)
+- Lowercase letters, numbers, and hyphens only
+- Must start with a letter
+- Default is "speckit" if no input provided
+
+**Your commands will be:**
+- `/<namespace>-specify` - Create feature specifications
+- `/<namespace>-plan` - Generate implementation plans
+- `/<namespace>-tasks` - Break down into tasks
+- `/<namespace>-implement` - Execute implementation
+- `/<namespace>-clarify` - Clarify ambiguities
+- `/<namespace>-analyze` - Analyze artifacts
+- `/<namespace>-checklist` - Generate quality checklists
+- `/<namespace>-constitution` - Manage project governance
+
+**How it works:**
+- The namespace is stored in `.specify/config.json` for reference
+- During initialization, all command files are automatically updated with your chosen namespace
+- Commands are properly installed and listed in your AI agent with the correct namespace
+- This ensures no conflicts between multiple projects using Spec Kit
+
+---
+
 ## 👥 Role Personas
 
 Spec Kit now supports **Role Personas** - specialized AI agent profiles that bring domain-specific expertise to your development workflow. During project initialization, you can select which personas to enable, and they'll contribute their specialized knowledge throughout the spec-driven development process.
