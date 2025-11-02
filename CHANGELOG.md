@@ -5,6 +5,31 @@ All notable changes to SpecX Bot will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **Missing PyYAML Dependency**: Fixed "No module named 'yaml'" error during persona setup by adding `pyyaml` to dependencies
+- **Beast Mode Chatmodes Not Generated**: Fixed issue where Beast Mode chatmodes were not being created for Copilot and other agents during `specx init`. The function now correctly looks for Beast Mode templates in the CLI installation directory instead of the project template directory
+- **Persona Status Command Error**: Fixed `KeyError: 'status'` in `specx persona status` by ensuring `get_context_summary()` always returns a status field
+- **Agent Context Not Updated**: Fixed issue where AI agents couldn't detect the current active persona. Now creates `CURRENT_PERSONA.md` file in agent directories when switching personas
+
+### Added
+
+- **Agent Persona Context Module**: New `agent_persona_context.py` module creates context files that make the active persona visible to AI agents
+- **Enhanced Persona Switching**: `specx persona switch` now automatically creates agent-specific context files and shows instructions for referencing the persona in your AI agent
+- **Constitution Integration**: New `specx update-constitution` command to inject project constitution into both persona files and Beast Mode chatmodes, making governance principles immediately available to AI personas
+- **Update Function**: `update_chatmodes_with_constitution()` function appends or updates constitution section in:
+  - Persona definition files (`memory/personas/*.md`)
+  - Beast Mode chatmode files (agent-specific directories)
+- **Constitution Documentation**: New `docs/constitution-integration.md` guide explaining how to integrate project governance with Beast Mode personas
+- **Updated Constitution Command**: Modified `/constitution` command template to automatically run `specx update-constitution` after creating/updating the constitution
+
+### Changed
+
+- **Copilot Chatmode Tools**: Updated GitHub Copilot Beast Mode template to include all available Copilot tools ('edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runTests')
+- **Simplified Persona Commands**: Removed complex commands (history, performance, add-note, add-artifact, export-metrics, customize, list-customizations) to focus on core functionality (switch, status, regenerate)
+
 ## [1.0.0] - 2025-01-XX
 
 ### 🎉 Major Release: SpecX Bot
@@ -18,19 +43,19 @@ This release represents a complete rebranding and major enhancement of the origi
 - **Module Renamed**: `specify_cli` → `specx_cli`
 - **Executable Renamed**: `specify-role` → `specx`
 - **Command Prefix Changed**: `/speckit.*` → `/specx-*`
-- **Repository URL**: Now at `https://github.com/hjk1995/spec-kit-role-persona`
+- **Repository URL**: Now at `https://github.com/hjk1995/specx-bot`
 
 ### Migration Guide
 
 **Old Installation:**
 ```bash
-uv tool install specify-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+uv tool install specify-cli --from git+https://github.com/hjk1995/specx-bot.git
 specify-role init myproject
 ```
 
 **New Installation:**
 ```bash
-uv tool install specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+uv tool install specx-cli --from git+https://github.com/hjk1995/specx-bot.git
 specx init myproject
 ```
 
@@ -84,11 +109,35 @@ specx init myproject
   - **Parallel Execution**: Configurable parallel persona execution with concurrency limits
   - **Backward Compatibility**: Persona system is opt-in; existing projects continue to work without personas
 
+- **Beast Mode Chatmodes**: Automatic transformation of role personas into comprehensive AI chatmodes
+  - **Autonomous Operation**: Chatmodes provide complete independence for AI agents to finish deliverables
+  - **Comprehensive Workflows**: Phase-by-phase execution guides with time estimates and validation
+  - **Error Handling**: Built-in recovery procedures for common failure scenarios
+  - **Success Metrics**: Trackable performance indicators and quality measures
+  - **Multi-Format Support**: Generates agent-specific formats:
+    - GitHub Copilot: `.github/chatmodes/*.chatmode.md`
+    - Claude/Cursor/Windsurf: `.[agent]/personas/*.md`
+    - Gemini/Qwen: `.[agent]/personas/*.toml`
+  - **Template System**: Extensible templates in `templates/chatmodes/`
+  - **Automatic Generation**: Created during `specx init` when personas are selected
+
+- **Advanced Beast Mode Features (Phase 4)**: Dynamic persona management and context preservation
+  - **Dynamic Persona Switching**: New `specx persona` command group with core subcommands:
+    - `switch`: Change active persona with context preservation and phase tracking
+    - `status`: View current persona, phase, duration, and artifacts
+    - `regenerate`: Rebuild chatmodes with latest templates
+  - **Context Preservation**: Sessions tracked in `.specify/persona_state.json` and `.specify/persona_history.json`
+  - **Agent Context Files**: Automatically creates `CURRENT_PERSONA.md` in agent directories to make active persona visible to AI agents
+  - **Performance Tracking**: Automatic session history tracking for future analysis
+  - **Persona Manager Module**: `src/specx_cli/persona_manager.py` for state management
+  - **Agent Persona Context Module**: `src/specx_cli/agent_persona_context.py` for AI agent integration
+
 ### Changed
 
 - Enhanced `specx init` command with development strategy and persona selection steps
-- Updated project initialization workflow to include strategy selection, namespace configuration, and persona setup
+- Updated project initialization workflow to include strategy selection, namespace configuration, persona setup, and Beast Mode chatmode generation
 - Added strategy, namespace, and persona configuration tracking to initialization progress display
+- Added automatic Beast Mode chatmode generation for selected personas during initialization
 - Updated all command templates (`specify.md`, `plan.md`, `tasks.md`, `implement.md`, `clarify.md`, `analyze.md`, `checklist.md`, `constitution.md`) with persona orchestration instructions
 - Updated all artifact templates (`spec-template.md`, `plan-template.md`, `tasks-template.md`) with persona contribution markers
 - Improved CLI user experience with arrow-key navigation for all selections

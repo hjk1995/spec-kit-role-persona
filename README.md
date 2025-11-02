@@ -68,7 +68,7 @@ For a deep dive into SDD principles, see the [original Spec Kit documentation](h
 
 ```bash
 # Install from GitHub
-uv tool install specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+uv tool install specx-cli --from git+https://github.com/hjk1995/specx-bot.git
 
 # Verify installation
 specx --version
@@ -77,7 +77,7 @@ specx --version
 ### Update SpecX Bot
 
 ```bash
-uv tool install --force specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+uv tool install --force specx-cli --from git+https://github.com/hjk1995/specx-bot.git
 ```
 
 ---
@@ -391,6 +391,48 @@ You can customize personas in several ways:
 3. **Disable Personas**: Update `.specify/config.json` to change enabled personas
 4. **Adjust Orchestration**: Configure parallel execution and concurrency limits
 
+### Beast Mode Chatmodes
+
+SpecX Bot automatically transforms your selected personas into comprehensive "Beast Mode" chatmodes for your AI agent. These chatmodes provide:
+
+- **Autonomous Operation**: Complete independence to finish all deliverables
+- **Comprehensive Workflows**: Phase-by-phase execution guides with time estimates
+- **Error Handling**: Built-in recovery procedures for common scenarios
+- **Success Metrics**: Trackable performance indicators
+- **Quality Gates**: Validation checkpoints throughout the process
+
+#### Generated Chatmode Files
+
+Based on your AI agent selection, Beast Mode files are created in:
+
+| AI Agent | Directory | File Format |
+|----------|-----------|-------------|
+| GitHub Copilot | `.github/chatmodes/` | `[persona].chatmode.md` |
+| Claude | `.claude/personas/` | `[persona].md` |
+| Cursor | `.cursor/personas/` | `[persona].md` |
+| Windsurf | `.windsurf/personas/` | `[persona].md` |
+| Gemini | `.gemini/personas/` | `[persona].toml` |
+
+#### Using Beast Mode
+
+1. **Activation**: Reference the chatmode file in your AI agent
+   - Copilot: Create new chat participant with chatmode file
+   - Claude: `@.claude/personas/business-analyst.md`
+   - Cursor: `@.cursor/personas/business-analyst.md`
+
+2. **Switching**: Change personas during development
+   ```
+   /persona:business-analyst    # Activate BA Beast Mode
+   /persona:solution-architect  # Switch to SA Beast Mode
+   ```
+
+3. **Workflow**: Let Beast Mode handle autonomous execution
+   - Personas work independently until completion
+   - Validate outputs at checkpoints
+   - Request approval when ready
+
+For detailed information, see [Beast Mode Documentation](docs/beast-mode.md).
+
 ---
 
 ## 📝 Commands
@@ -403,6 +445,16 @@ SpecX Bot provides a comprehensive set of commands for the entire development li
 |---------|-------------|---------|
 | `specx init` | Initialize a new project | `specx init myproject --ai cursor-agent` |
 | `specx check` | Verify prerequisites | `specx check` |
+| `specx regenerate-chatmodes` | Regenerate Beast Mode chatmodes | `specx regenerate-chatmodes --force` |
+| `specx update-constitution` | Update chatmodes with project constitution | `specx update-constitution` |
+
+### Persona Management Commands (Beast Mode)
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `specx persona switch` | Switch to a different persona | `specx persona switch business-analyst --phase specify` |
+| `specx persona status` | Show current persona status | `specx persona status` |
+| `specx persona regenerate` | Regenerate persona chatmodes | `specx persona regenerate --force` |
 
 ### Spec Commands (via AI Agent)
 
@@ -511,7 +563,7 @@ See the [LICENSE](./LICENSE) file for full details.
 
 ## 💬 Support
 
-For support, please open a GitHub issue at [github.com/hjk1995/spec-kit-role-persona/issues](https://github.com/hjk1995/spec-kit-role-persona/issues).
+For support, please open a GitHub issue at [github.com/hjk1995/specx-bot/issues](https://github.com/hjk1995/specx-bot/issues).
 
 We welcome:
 - 🐛 Bug reports
@@ -523,7 +575,7 @@ We welcome:
 
 ## 🚀 What's Next?
 
-1. **Install SpecX Bot**: `uv tool install specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git`
+1. **Install SpecX Bot**: `uv tool install specx-cli --from git+https://github.com/hjk1995/specx-bot.git`
 2. **Initialize Your Project**: `specx init myproject`
 3. **Choose Your Strategy**: Role-Based or Traditional
 4. **Select Your Personas**: Build your virtual team

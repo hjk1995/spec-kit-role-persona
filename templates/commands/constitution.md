@@ -145,9 +145,21 @@ Follow this execution flow:
 
 7. Write the completed constitution back to `/memory/constitution.md` (overwrite).
 
-8. Output a final summary to the user with:
+8. **Update Beast Mode Chatmodes** (if personas are enabled):
+   - After writing the constitution, **automatically run** this command to inject the constitution into chatmode files:
+   ```bash
+   specx update-constitution
+   ```
+   - This ensures all AI agent personas include the project-specific governance principles
+   - The constitution will be appended to each persona chatmode file
+   - This makes the governance principles immediately available when using Beast Mode personas
+   - **IMPORTANT**: Always run this command after updating the constitution. Don't ask the user - just do it.
+   - Report the result (e.g., "Updated 3 chatmode files with project constitution")
+
+9. Output a final summary to the user with:
    - New version and bump rationale.
    - Any files flagged for manual follow-up.
+   - Confirmation that Beast Mode chatmodes were updated (if applicable)
    - Suggested commit message (e.g., `docs: amend constitution to vX.Y.Z (principle additions + governance update)`).
 
 Formatting & Style Requirements:

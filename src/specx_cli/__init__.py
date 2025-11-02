@@ -7,6 +7,7 @@
 #     "platformdirs",
 #     "readchar",
 #     "httpx",
+#     "pyyaml",
 # ]
 # ///
 """
@@ -20,7 +21,7 @@ Usage:
     uvx specx-cli.py init --here
 
 Or install globally:
-    uv tool install specx-cli --from git+https://github.com/hjk1995/spec-kit-role-persona.git
+    uv tool install specx-cli --from git+https://github.com/hjk1995/specx-bot.git
     specx init <project-name>
     specx init .
     specx init --here
@@ -205,6 +206,80 @@ PERSONA_CONFIG = {
         "name": "Backend Developer (BE)",
         "description": "API design, database design, business logic",
         "default": False,
+    },
+}
+
+# Beast Mode chatmode configuration
+CHATMODE_CONFIG = {
+    "copilot": {
+        "dir": ".github/chatmodes", 
+        "ext": ".chatmode.md", 
+        "format": "copilot-beast"
+    },
+    "claude": {
+        "dir": ".claude/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "gemini": {
+        "dir": ".gemini/personas", 
+        "ext": ".toml", 
+        "format": "toml-beast"
+    },
+    "cursor-agent": {
+        "dir": ".cursor/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "qwen": {
+        "dir": ".qwen/personas", 
+        "ext": ".toml", 
+        "format": "toml-beast"
+    },
+    "opencode": {
+        "dir": ".opencode/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "codex": {
+        "dir": ".codex/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "windsurf": {
+        "dir": ".windsurf/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "kilocode": {
+        "dir": ".kilocode/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "auggie": {
+        "dir": ".augment/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "codebuddy": {
+        "dir": ".codebuddy/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "roo": {
+        "dir": ".roo/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "q": {
+        "dir": ".amazonq/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
+    },
+    "amp": {
+        "dir": ".agents/personas", 
+        "ext": ".md", 
+        "format": "markdown-beast"
     },
 }
 
@@ -809,6 +884,484 @@ def copy_persona_files(project_path: Path, selected_personas: list, template_sou
         else:
             console.print(f"[yellow]Warning: Persona README not found[/yellow]")
 
+def generate_beast_mode_chatmodes(project_path: Path, ai_assistant: str, selected_personas: list) -> int:
+    """
+    Generate Beast Mode chatmode files from selected personas.
+    
+    Args:
+        project_path: Path to the project root
+        ai_assistant: AI assistant key (e.g., 'claude', 'copilot', 'gemini')
+        selected_personas: List of selected persona IDs
+        
+    Returns:
+        Number of chatmode files generated
+    """
+    import re
+    import yaml
+    from string import Template
+    
+    # Get chatmode configuration for the agent
+    chatmode_cfg = CHATMODE_CONFIG.get(ai_assistant)
+    if not chatmode_cfg:
+        return 0
+    
+    # Create agent-specific chatmode/persona directory
+    chatmode_dir = project_path / chatmode_cfg["dir"]
+    chatmode_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Load Beast Mode templates from CLI installation directory
+    # These templates are part of the SpecX CLI, not the project template
+    cli_template_dir = Path(__file__).parent.parent.parent / "templates" / "chatmodes"
+    
+    # Fallback to project template directory for development/testing
+    if not cli_template_dir.exists():
+        cli_template_dir = project_path / "templates" / "chatmodes"
+    
+    if chatmode_cfg["format"] == "copilot-beast":
+        template_file = cli_template_dir / "beast-mode-copilot.md"
+    elif chatmode_cfg["format"] == "toml-beast":
+        template_file = cli_template_dir / "beast-mode-toml.toml"
+    else:  # markdown-beast
+        template_file = cli_template_dir / "beast-mode-markdown.md"
+    
+    if not template_file.exists():
+        console.print(f"[yellow]Warning: Beast Mode template not found: {template_file}[/yellow]")
+        console.print(f"[yellow]Looked in: {cli_template_dir}[/yellow]")
+        return 0
+    
+    with open(template_file, 'r', encoding='utf-8') as f:
+        template_content = f.read()
+    
+    generated_count = 0
+    
+    # Process each selected persona
+    for persona_id in selected_personas:
+        # Load persona definition
+        persona_file = project_path / "memory" / "personas" / f"{persona_id}.md"
+        if not persona_file.exists():
+            console.print(f"[yellow]Warning: Persona file not found: {persona_file}[/yellow]")
+            continue
+        
+        with open(persona_file, 'r', encoding='utf-8') as f:
+            persona_content = f.read()
+        
+        # Parse persona frontmatter
+        frontmatter_match = re.match(r'^---\n(.*?)\n---\n(.*)$', persona_content, re.DOTALL)
+        if not frontmatter_match:
+            continue
+        
+        frontmatter, body = frontmatter_match.groups()
+        
+        # Parse YAML frontmatter
+        try:
+            persona_data = yaml.safe_load(frontmatter)
+        except:
+            console.print(f"[yellow]Warning: Could not parse persona frontmatter: {persona_id}[/yellow]")
+            continue
+        
+        # Extract persona information
+        persona_name = persona_data.get('name', 'Unknown Persona')
+        short_name = persona_data.get('short_name', 'XX')
+        role = persona_data.get('role', 'Unknown Role')
+        contributes_to = persona_data.get('contributes_to', [])
+        phases = persona_data.get('phases', {})
+        
+        # Transform persona content to Beast Mode
+        beast_mode_data = transform_to_beast_mode(
+            persona_id=persona_id,
+            persona_name=persona_name,
+            short_name=short_name,
+            role=role,
+            body=body,
+            contributes_to=contributes_to,
+            phases=phases
+        )
+        
+        # Apply customizations if available
+        try:
+            from .beast_mode_customizer import enhance_transform_with_customization
+            beast_mode_data = enhance_transform_with_customization(
+                transform_to_beast_mode, project_path, persona_id, beast_mode_data
+            )
+        except ImportError:
+            pass  # Customization not available
+        
+        # Apply template substitution
+        try:
+            output_content = Template(template_content).safe_substitute(**beast_mode_data)
+        except Exception as e:
+            console.print(f"[yellow]Warning: Template substitution failed for {persona_id}: {e}[/yellow]")
+            continue
+        
+        # Generate output filename
+        output_filename = f"{persona_id}{chatmode_cfg['ext']}"
+        output_path = chatmode_dir / output_filename
+        
+        # Write chatmode file
+        try:
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(output_content)
+            generated_count += 1
+        except Exception as e:
+            console.print(f"[yellow]Warning: Could not write chatmode file {output_filename}: {e}[/yellow]")
+    
+    # Generate persona switching command file
+    if generated_count > 0:
+        from .persona_manager import create_persona_command_file
+        create_persona_command_file(project_path, ai_assistant)
+    
+    return generated_count
+
+def transform_to_beast_mode(persona_id: str, persona_name: str, short_name: str, role: str, 
+                           body: str, contributes_to: list, phases: dict) -> dict:
+    """
+    Transform persona definition to Beast Mode format.
+    
+    Returns dict with all template variables populated.
+    """
+    # Parse body sections to extract relevant information
+    sections = parse_persona_sections(body)
+    
+    # Build Beast Mode data
+    beast_mode_data = {
+        'persona_id': persona_id,
+        'name': persona_name,
+        'full_name': persona_name,
+        'short_name': short_name,
+        'role': role,
+        
+        # Mission and objectives
+        'mission': f"Transform project artifacts through {role.lower()} expertise",
+        'mission_statement': sections.get('role_description', f"As {persona_name}, you are responsible for {role.lower()}."),
+        'role_emphasis': f"primary {role.lower()} expert",
+        'deliverable_emphasis': f"{role.lower()} foundation",
+        
+        # Objectives
+        'objective_1': f"Analyze all inputs from a {role.lower()} perspective",
+        'objective_2': f"Generate comprehensive {role.lower()} deliverables",
+        'objective_3': f"Ensure quality and consistency in all outputs",
+        
+        # Input analysis
+        'input_analysis': sections.get('input_analysis', 'Analyze all relevant project inputs'),
+        'must_have_inputs': sections.get('must_have_inputs', '- [ ] Project requirements\n- [ ] Technical constraints'),
+        'should_have_inputs': sections.get('should_have_inputs', '- [ ] Existing documentation\n- [ ] Team structure'),
+        'nice_to_have_inputs': sections.get('nice_to_have_inputs', '- [ ] Historical context\n- [ ] Similar projects'),
+        
+        # Deliverables
+        'deliverables_list': format_deliverables(contributes_to),
+        'primary_deliverables': format_primary_deliverables(contributes_to),
+        
+        # Phase information
+        'phase_number': '1',
+        'phase_name': 'Analysis and Planning',
+        'phase_duration': '30-45 min',
+        'phase_steps': '1. Parse all input documents\n2. Extract relevant information\n3. Identify gaps and conflicts',
+        'phase_validation': '- [ ] All inputs reviewed\n- [ ] Key information extracted\n- [ ] Gaps documented',
+        'phase_issues': '- Missing critical information\n- Conflicting requirements\n- Ambiguous specifications',
+        
+        # Workflow phases
+        'phase_1_name': 'Analysis and Planning',
+        'phase_1_duration': '30-45 minutes',
+        'phase_1_objective': f'Understand project context from {role.lower()} perspective',
+        'phase_1_steps': format_phase_steps(phases, 'specify', 'analysis'),
+        'phase_1_validation': '- All inputs analyzed\n- Context understood\n- Plan created',
+        
+        'phase_2_name': 'Core Execution',
+        'phase_2_duration': '45-60 minutes',
+        'phase_2_objective': f'Generate all {role.lower()} deliverables',
+        'phase_2_steps': format_phase_steps(phases, 'plan', 'execution'),
+        'phase_2_validation': '- All deliverables created\n- Quality standards met\n- Dependencies resolved',
+        
+        'phase_3_name': 'Validation and Finalization',
+        'phase_3_duration': '15-30 minutes',
+        'phase_3_objective': 'Validate and finalize all outputs',
+        'phase_3_steps': format_phase_steps(phases, 'implement', 'validation'),
+        'phase_3_validation': '- All outputs validated\n- Integration verified\n- Approval ready',
+        
+        # Metrics
+        'metric_category_1': f'{persona_id.replace("-", "_")}_deliverables',
+        'metric_1': 'documents_created',
+        'metric_2': 'sections_completed',
+        'metric_category_2': 'quality',
+        'metric_subcategory_1': 'validation_passed',
+        'metric_subcategory_2': 'rework_required',
+        
+        # Coverage metrics
+        'coverage_metric_1': 'requirements_addressed',
+        'coverage_metric_2': 'deliverables_complete',
+        'coverage_metric_3': 'edge_cases_documented',
+        
+        # Artifacts and quality
+        'artifact_checklist': format_artifact_checklist(contributes_to),
+        'quality_checklist': sections.get('quality_checklist', '- [ ] All deliverables complete\n- [ ] Quality standards met'),
+        'integration_checklist': '- [ ] Notifications queued\n- [ ] Approvals requested\n- [ ] Changes logged',
+        'next_stage_checklist': format_next_stage_checklist(role),
+        
+        # Collaboration
+        'collaboration_section': sections.get('collaboration', f'Collaborate with other personas for {role.lower()} alignment'),
+        'phase_contributions': format_phase_contributions(phases),
+        
+        # Additional fields
+        'start_message': f'Analyzing project from {role.lower()} perspective',
+        'estimated_duration': '2-3 hours',
+        'artifact_name': f'{persona_name} Deliverables',
+        'artifact_summary': f'Complete {role.lower()} documentation and artifacts',
+        'artifact_path': f'docs/{persona_id}/',
+        'approval_summary': f'All {role.lower()} deliverables ready for review',
+        'duration': 'Xh Ym',
+        'artifact_count': 'N',
+        
+        # Error handling
+        'missing_info_description': 'Missing critical project information',
+        'required_field_1': 'Project requirements',
+        'required_field_2': 'Technical constraints',
+        'required_field_3': 'Success criteria',
+        
+        'conflict_description': 'Requirement conflict detected',
+        'item_1': 'Requirement A',
+        'item_2': 'Requirement B',
+        
+        'constraint_description': 'Technical constraint violation',
+        'requirement': 'Required capability',
+        'reality': 'Current limitation',
+        
+        # TOML-specific fields
+        'phase_1_step_1': 'Review all input documents',
+        'phase_1_step_2': 'Extract key information',
+        'phase_1_step_3': 'Document findings',
+        
+        'phase_2_step_1': 'Create primary deliverables',
+        'phase_2_step_2': 'Validate outputs',
+        'phase_2_step_3': 'Integrate with other work',
+        
+        'phase_3_step_1': 'Run final validation',
+        'phase_3_step_2': 'Prepare for approval',
+        'phase_3_step_3': 'Document completion',
+        
+        # Additional TOML fields
+        'required_input_1': 'Project specification',
+        'required_input_2': 'Technical requirements',
+        'required_input_3': 'Constraints and assumptions',
+        
+        'optional_input_1': 'Historical context',
+        'optional_input_2': 'Similar projects',
+        
+        'deliverable_1': f'Primary {role.lower()} document',
+        'deliverable_2': f'{role.capitalize()} analysis report',
+        'deliverable_3': f'{role.capitalize()} recommendations',
+        
+        'expanded_mission': sections.get('role_description', f'Transform project through {role.lower()} expertise'),
+        'phase_1_detailed_steps': 'Step-by-step analysis process',
+        'phase_2_detailed_steps': 'Detailed execution workflow',
+        'phase_3_detailed_steps': 'Validation and finalization steps',
+        
+        'detailed_output_requirements': f'Generate comprehensive {role.lower()} deliverables',
+        'success_criteria_list': f'- All {role.lower()} work complete\n- Quality validated\n- Ready for integration',
+        'final_checklist': '- All deliverables present\n- Quality standards met\n- Integration verified',
+        
+        'input_sources': 'Project specifications, requirements, constraints',
+        'output_consumers': 'Next phase personas, project team',
+        'coordination_points': 'Integration touchpoints with other personas',
+        
+        # Quality targets
+        'quality_target': '95',
+        'rework_target': '5',
+        'time_target': '3 hours',
+        
+        # Phase contributions for TOML
+        'specify_contribution_1': phases.get('specify', ['requirements'])[0] if phases.get('specify') else 'requirements',
+        'specify_contribution_2': phases.get('specify', ['', 'analysis'])[1] if len(phases.get('specify', [])) > 1 else 'analysis',
+        'plan_contribution_1': phases.get('plan', ['design'])[0] if phases.get('plan') else 'design',
+        'plan_contribution_2': phases.get('plan', ['', 'architecture'])[1] if len(phases.get('plan', [])) > 1 else 'architecture',
+        'tasks_contribution_1': phases.get('tasks', ['breakdown'])[0] if phases.get('tasks') else 'breakdown',
+        'tasks_contribution_2': phases.get('tasks', ['', 'estimation'])[1] if len(phases.get('tasks', [])) > 1 else 'estimation',
+        'implement_contribution_1': phases.get('implement', ['validation'])[0] if phases.get('implement') else 'validation',
+        'implement_contribution_2': phases.get('implement', ['', 'review'])[1] if len(phases.get('implement', [])) > 1 else 'review',
+        'clarify_contribution_1': phases.get('clarify', ['questions'])[0] if phases.get('clarify') else 'questions',
+        'clarify_contribution_2': phases.get('clarify', ['', 'resolution'])[1] if len(phases.get('clarify', [])) > 1 else 'resolution',
+        'analyze_contribution_1': phases.get('analyze', ['review'])[0] if phases.get('analyze') else 'review',
+        'analyze_contribution_2': phases.get('analyze', ['', 'validation'])[1] if len(phases.get('analyze', [])) > 1 else 'validation',
+        'checklist_contribution_1': phases.get('checklist', ['quality'])[0] if phases.get('checklist') else 'quality',
+        'checklist_contribution_2': phases.get('checklist', ['', 'completeness'])[1] if len(phases.get('checklist', [])) > 1 else 'completeness',
+        'constitution_contribution_1': phases.get('constitution', ['principles'])[0] if phases.get('constitution') else 'principles',
+        'constitution_contribution_2': phases.get('constitution', ['', 'standards'])[1] if len(phases.get('constitution', [])) > 1 else 'standards',
+        
+        # Success and completion
+        'completion_metrics': f'- All {role.lower()} deliverables complete\n- Quality validation passed',
+        'quality_metrics': '- First-pass quality > 95%\n- Rework < 5%',
+        'deliverable_checklist': f'- [ ] All {role.lower()} documents complete\n- [ ] Quality standards met',
+        'completion_summary': f'All {role.lower()} work complete and validated',
+        'artifact_list': f'- Primary {role.lower()} document\n- Analysis reports\n- Recommendations',
+        'validation_summary': 'All validation checks passed',
+        'next_steps': 'Ready for integration with other deliverables',
+        'count': 'N',
+        'date': 'YYYYMMDD',
+    }
+    
+    return beast_mode_data
+
+def parse_persona_sections(body: str) -> dict:
+    """Parse persona markdown body into sections."""
+    sections = {}
+    current_section = None
+    current_content = []
+    
+    for line in body.split('\n'):
+        if line.startswith('## '):
+            if current_section:
+                sections[current_section.lower().replace(' ', '_')] = '\n'.join(current_content)
+            current_section = line[3:].strip()
+            current_content = []
+        elif current_section:
+            current_content.append(line)
+    
+    if current_section:
+        sections[current_section.lower().replace(' ', '_')] = '\n'.join(current_content)
+    
+    return sections
+
+def format_deliverables(contributes_to: list) -> str:
+    """Format deliverables list from contributes_to phases."""
+    deliverables = []
+    for phase in contributes_to:
+        deliverables.append(f"- {phase.capitalize()} phase contributions")
+    return '\n'.join(deliverables) if deliverables else '- Primary analysis document\n- Recommendations report'
+
+def format_primary_deliverables(contributes_to: list) -> str:
+    """Format primary deliverables section."""
+    return '\n'.join([f"### {phase.capitalize()} Phase\n- Comprehensive {phase} documentation" 
+                     for phase in contributes_to[:3]]) if contributes_to else '### Primary Deliverables\n- Core documentation'
+
+def format_phase_steps(phases: dict, phase_name: str, default: str) -> str:
+    """Format phase steps from phases data."""
+    if phase_name in phases and phases[phase_name]:
+        return '\n'.join([f"{i+1}. {step.replace('-', ' ').capitalize()}" 
+                         for i, step in enumerate(phases[phase_name])])
+    return f"1. Perform {default} tasks\n2. Validate outputs\n3. Prepare for next phase"
+
+def format_artifact_checklist(contributes_to: list) -> str:
+    """Format artifact checklist based on contributions."""
+    checklist = []
+    for phase in contributes_to:
+        checklist.append(f"- [ ] {phase.capitalize()} deliverables complete")
+    return '\n'.join(checklist) if checklist else '- [ ] All deliverables complete'
+
+def format_next_stage_checklist(role: str) -> str:
+    """Format next stage readiness checklist."""
+    return f"""- [ ] All {role.lower()} deliverables ready
+- [ ] Integration points documented
+- [ ] Handoff to next phase prepared
+- [ ] Quality validation complete"""
+
+def format_phase_contributions(phases: dict) -> str:
+    """Format phase contributions section."""
+    contributions = []
+    for phase, items in phases.items():
+        if items:
+            contributions.append(f"### {phase.capitalize()} Phase")
+            for item in items:
+                contributions.append(f"- {item.replace('-', ' ').capitalize()}")
+    return '\n'.join(contributions) if contributions else '### Phase Contributions\n- Analysis and recommendations'
+
+def update_chatmodes_with_constitution(project_path: Path) -> int:
+    """
+    Update Beast Mode chatmodes and persona files to include project constitution.
+    
+    This is called after /constitution command to inject project-specific
+    governance principles into both chatmode files and persona definition files.
+    
+    Args:
+        project_path: Path to the project root
+        
+    Returns:
+        Number of files updated
+    """
+    import re
+    
+    # Load constitution
+    constitution_file = project_path / "memory" / "constitution.md"
+    if not constitution_file.exists():
+        return 0
+    
+    with open(constitution_file, 'r', encoding='utf-8') as f:
+        constitution_content = f.read()
+    
+    updated_count = 0
+    
+    # 1. Update persona definition files in memory/personas/
+    personas_dir = project_path / "memory" / "personas"
+    if personas_dir.exists():
+        for persona_file in personas_dir.glob("*.md"):
+            # Skip README
+            if persona_file.name == "README.md":
+                continue
+            
+            try:
+                with open(persona_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                # Check if constitution already embedded
+                if '## Project Constitution' in content:
+                    # Replace existing constitution section
+                    pattern = r'## Project Constitution\n.*?(?=\n## |\Z)'
+                    replacement = f'## Project Constitution\n\n{constitution_content}\n'
+                    updated_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+                else:
+                    # Append constitution at the end
+                    updated_content = content.rstrip() + f'\n\n---\n\n## Project Constitution\n\n{constitution_content}\n'
+                
+                # Write updated content
+                with open(persona_file, 'w', encoding='utf-8') as f:
+                    f.write(updated_content)
+                
+                updated_count += 1
+            except Exception as e:
+                console.print(f"[yellow]Warning: Could not update persona {persona_file.name}: {e}[/yellow]")
+    
+    # 2. Update Beast Mode chatmode files
+    # Detect AI assistant from project structure
+    ai_assistant = None
+    for agent_key in AGENT_CONFIG.keys():
+        agent_dir = project_path / AGENT_CONFIG[agent_key]["folder"]
+        if agent_dir.exists():
+            ai_assistant = agent_key
+            break
+    
+    if ai_assistant:
+        chatmode_cfg = CHATMODE_CONFIG.get(ai_assistant)
+        if chatmode_cfg:
+            chatmode_dir = project_path / chatmode_cfg["dir"]
+            if chatmode_dir.exists():
+                # Update each chatmode/persona file with constitution
+                for chatmode_file in chatmode_dir.glob(f"*{chatmode_cfg['ext']}"):
+                    # Skip persona-switch and current persona files
+                    if 'persona-switch' in chatmode_file.name or 'CURRENT_PERSONA' in chatmode_file.name:
+                        continue
+                    
+                    try:
+                        with open(chatmode_file, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        
+                        # Check if constitution already embedded
+                        if '## Project Constitution' in content:
+                            # Replace existing constitution section
+                            pattern = r'## Project Constitution\n.*?(?=\n## |\Z)'
+                            replacement = f'## Project Constitution\n\n{constitution_content}\n'
+                            updated_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+                        else:
+                            # Append constitution at the end
+                            updated_content = content.rstrip() + f'\n\n---\n\n## Project Constitution\n\n{constitution_content}\n'
+                        
+                        # Write updated content
+                        with open(chatmode_file, 'w', encoding='utf-8') as f:
+                            f.write(updated_content)
+                        
+                        updated_count += 1
+                    except Exception as e:
+                        console.print(f"[yellow]Warning: Could not update {chatmode_file.name}: {e}[/yellow]")
+    
+    return updated_count
+
 class BannerGroup(TyperGroup):
     """Custom group that shows banner before help."""
 
@@ -877,7 +1430,7 @@ def check_tool(tool: str, tracker: StepTracker = None) -> bool:
         True if tool is found, False otherwise
     """
     # Special handling for Claude CLI after `claude migrate-installer`
-    # See: https://github.com/hjk1995/spec-kit-role-persona/issues/123
+    # See: https://github.com/hjk1995/specx-bot/issues/123
     # The migrate-installer command REMOVES the original executable from PATH
     # and creates an alias at ~/.claude/local/claude instead
     # This path should be prioritized over other claude executables in PATH
@@ -1095,7 +1648,7 @@ def clone_from_main_branch(repo_owner: str, repo_name: str, ai_assistant: str, d
 
 def download_template_from_github(ai_assistant: str, download_dir: Path, *, script_type: str = "sh", verbose: bool = True, show_progress: bool = True, client: httpx.Client = None, debug: bool = False, github_token: str = None) -> Tuple[Path, dict]:
     repo_owner = "hjk1995"
-    repo_name = "spec-kit-role-persona"
+    repo_name = "specx-bot"
     if client is None:
         client = httpx.Client(verify=ssl_context)
 
@@ -1478,6 +2031,197 @@ def ensure_executable_scripts(project_path: Path, tracker: StepTracker | None = 
             for f in failures:
                 console.print(f"  - {f}")
 
+# Create persona subcommand group
+persona_app = typer.Typer(name="persona", help="Manage Beast Mode personas")
+app.add_typer(persona_app, name="persona")
+
+@persona_app.command(name="switch")
+def persona_switch(
+    persona_id: str = typer.Argument(..., help="Persona ID to switch to (e.g., business-analyst, solution-architect)"),
+    phase: Optional[str] = typer.Option(None, "--phase", help="Optional phase to set (e.g., specify, plan, implement)"),
+):
+    """Switch to a different Beast Mode persona."""
+    from .persona_manager import PersonaManager
+    
+    project_path = Path.cwd()
+    config_file = project_path / ".specify" / "config.json"
+    
+    if not config_file.exists():
+        console.print("[red]Error:[/red] Not in a SpecX Bot project directory")
+        console.print("Run this command from a project initialized with [cyan]specx init[/cyan]")
+        raise typer.Exit(1)
+    
+    # Load persona configuration
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+    
+    if not config.get("personas", {}).get("enabled"):
+        console.print("[red]Error:[/red] No personas enabled in this project")
+        console.print("This project was initialized without personas (Traditional mode)")
+        raise typer.Exit(1)
+    
+    enabled_personas = config["personas"]["enabled"]
+    if persona_id not in enabled_personas:
+        console.print(f"[red]Error:[/red] Persona '{persona_id}' is not enabled")
+        console.print(f"Enabled personas: {', '.join(enabled_personas)}")
+        raise typer.Exit(1)
+    
+    # Detect AI assistant from project structure
+    ai_assistant = None
+    for agent_key in AGENT_CONFIG.keys():
+        agent_dir = project_path / AGENT_CONFIG[agent_key]["folder"]
+        if agent_dir.exists():
+            ai_assistant = agent_key
+            break
+    
+    # Perform the switch
+    manager = PersonaManager(project_path)
+    result = manager.switch_persona(persona_id, phase, ai_assistant=ai_assistant)
+    
+    console.print(f"[green]✓[/green] Switched to [cyan]{persona_id}[/cyan] persona")
+    if result.get("previous_persona"):
+        console.print(f"  Previous: [dim]{result['previous_persona']}[/dim]")
+    if phase:
+        console.print(f"  Phase: [cyan]{phase}[/cyan]")
+    console.print(f"  Activated: {result['activated_at']}")
+    
+    # Show how to use in AI agent
+    if ai_assistant:
+        chatmode_cfg = CHATMODE_CONFIG.get(ai_assistant, {})
+        if chatmode_cfg:
+            persona_file = chatmode_cfg["dir"] + "/" + persona_id + chatmode_cfg["ext"]
+            console.print(f"\n[dim]In your AI agent, reference: [cyan]@{persona_file}[/cyan][/dim]")
+            console.print(f"[dim]Or check: [cyan]CURRENT_PERSONA.md[/cyan] in your agent directory[/dim]")
+
+@persona_app.command(name="status")
+def persona_status():
+    """Show current persona status and context."""
+    from .persona_manager import PersonaManager
+    
+    project_path = Path.cwd()
+    manager = PersonaManager(project_path)
+    
+    summary = manager.get_context_summary()
+    
+    if summary["status"] == "no_active_persona":
+        console.print("[yellow]No active persona[/yellow]")
+        console.print("Use [cyan]specx persona switch <persona-id>[/cyan] to activate a persona")
+        return
+    
+    console.print(f"[bold]Active Persona:[/bold] [cyan]{summary['persona']}[/cyan]")
+    console.print(f"Phase: {summary['phase'] or 'Not specified'}")
+    console.print(f"Duration: {summary['duration_seconds'] / 60:.1f} minutes")
+    
+    if summary['artifacts']:
+        console.print(f"\n[bold]Artifacts Created:[/bold] {len(summary['artifacts'])}")
+        for artifact in summary['artifacts'][-5:]:
+            console.print(f"  • {artifact}")
+    
+@persona_app.command(name="regenerate")
+def persona_regenerate(
+    persona_id: Optional[str] = typer.Argument(None, help="Specific persona to regenerate (or all if not specified)"),
+    force: bool = typer.Option(False, "--force", "-f", help="Force regeneration even if files exist"),
+):
+    """Regenerate Beast Mode chatmode files."""
+    project_path = Path.cwd()
+    config_file = project_path / ".specify" / "config.json"
+    
+    if not config_file.exists():
+        console.print("[red]Error:[/red] Not in a SpecX Bot project directory")
+        raise typer.Exit(1)
+    
+    # Load configuration
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+    
+    if not config.get("personas", {}).get("enabled"):
+        console.print("[red]Error:[/red] No personas enabled in this project")
+        raise typer.Exit(1)
+    
+    # Get AI assistant from config
+    ai_assistant = None
+    for agent_key in AGENT_CONFIG.keys():
+        agent_dir = project_path / AGENT_CONFIG[agent_key]["folder"]
+        if agent_dir.exists():
+            ai_assistant = agent_key
+            break
+    
+    if not ai_assistant:
+        console.print("[red]Error:[/red] Could not determine AI assistant for this project")
+        raise typer.Exit(1)
+    
+    # Determine which personas to regenerate
+    if persona_id:
+        if persona_id not in config["personas"]["enabled"]:
+            console.print(f"[red]Error:[/red] Persona '{persona_id}' is not enabled")
+            raise typer.Exit(1)
+        personas_to_generate = [persona_id]
+    else:
+        personas_to_generate = config["personas"]["enabled"]
+    
+    # Check if files exist
+    chatmode_cfg = CHATMODE_CONFIG.get(ai_assistant, {})
+    if chatmode_cfg and not force:
+        chatmode_dir = project_path / chatmode_cfg["dir"]
+        existing_files = []
+        for pid in personas_to_generate:
+            file_path = chatmode_dir / f"{pid}{chatmode_cfg['ext']}"
+            if file_path.exists():
+                existing_files.append(file_path)
+        
+        if existing_files:
+            console.print("[yellow]Warning:[/yellow] The following chatmode files already exist:")
+            for f in existing_files:
+                console.print(f"  • {f}")
+            if not typer.confirm("\nOverwrite existing files?"):
+                console.print("Regeneration cancelled")
+                raise typer.Exit(0)
+    
+    # Regenerate chatmodes
+    console.print(f"[cyan]Regenerating Beast Mode chatmodes for {ai_assistant}...[/cyan]")
+    
+    count = generate_beast_mode_chatmodes(project_path, ai_assistant, personas_to_generate)
+    
+    if count > 0:
+        console.print(f"[green]✓[/green] Regenerated {count} Beast Mode chatmode(s)")
+        console.print(f"Files created in: {chatmode_cfg['dir']}/")
+    else:
+        console.print("[yellow]No chatmodes were generated[/yellow]")
+
+
+@app.command(name="regenerate-chatmodes")
+def regenerate_chatmodes(
+    force: bool = typer.Option(False, "--force", "-f", help="Force regeneration even if files exist"),
+):
+    """Regenerate all Beast Mode chatmode files for the project."""
+    # This is a convenience wrapper for persona regenerate
+    persona_regenerate(persona_id=None, force=force)
+
+@app.command(name="update-constitution")
+def update_constitution():
+    """Update Beast Mode chatmodes with the latest project constitution."""
+    project_path = Path.cwd()
+    
+    # Check if constitution exists
+    constitution_file = project_path / "memory" / "constitution.md"
+    if not constitution_file.exists():
+        console.print("[red]Error:[/red] No constitution found at memory/constitution.md")
+        console.print("Run the [cyan]/constitution[/cyan] command in your AI agent first")
+        raise typer.Exit(1)
+    
+    # Update chatmodes and persona files
+    console.print("[cyan]Updating persona files and Beast Mode chatmodes with project constitution...[/cyan]")
+    updated_count = update_chatmodes_with_constitution(project_path)
+    
+    if updated_count > 0:
+        console.print(f"[green]✓[/green] Updated {updated_count} file(s) with project constitution")
+        console.print("  • Persona definition files (memory/personas/)")
+        console.print("  • Beast Mode chatmode files (agent directory)")
+        console.print("\nYour AI agent personas now include project-specific governance principles")
+    else:
+        console.print("[yellow]No files were updated[/yellow]")
+        console.print("Make sure you have personas configured (run [cyan]specx init[/cyan] with role-based strategy)")
+
 @app.command()
 def init(
     project_name: str = typer.Argument(None, help="Name for your new project directory (optional if using --here, or use '.' for current directory)"),
@@ -1739,7 +2483,13 @@ def init(
                 try:
                     copy_persona_files(project_path, selected_personas)
                     create_persona_config(project_path, selected_personas, namespace, strategy)
-                    tracker.complete("personas", f"{len(selected_personas)} personas configured")
+                    
+                    # Generate Beast Mode chatmodes for the AI assistant
+                    chatmode_count = generate_beast_mode_chatmodes(project_path, selected_ai, selected_personas)
+                    if chatmode_count > 0:
+                        tracker.complete("personas", f"{len(selected_personas)} personas configured, {chatmode_count} chatmodes generated")
+                    else:
+                        tracker.complete("personas", f"{len(selected_personas)} personas configured")
                 except Exception as e:
                     tracker.error("personas", f"setup failed: {str(e)}")
             else:

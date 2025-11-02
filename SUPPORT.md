@@ -6,7 +6,7 @@ SpecX Bot uses GitHub issues to track bugs and feature requests. Please search t
 
 For help or questions about using SpecX Bot, please:
 
-- Open a [GitHub issue](https://github.com/hjk1995/spec-kit-role-persona/issues/new) for bug reports, feature requests, or questions
+- Open a [GitHub issue](https://github.com/hjk1995/specx-bot/issues/new) for bug reports, feature requests, or questions
 - Check the [README](./README.md) for comprehensive documentation on SpecX Bot features
 - Review the [Spec-Driven Development guide](./spec-driven.md) for detailed documentation on the SDD methodology
 - Consult the [original Spec Kit documentation](https://github.com/github/spec-kit) for SDD fundamentals

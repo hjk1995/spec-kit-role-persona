@@ -677,6 +677,126 @@ When testing the persona system:
 - Test persona integration with multiple AI agents
 - Maintain backward compatibility
 
+## Beast Mode Chatmode Integration
+
+### Overview
+
+SpecX Bot transforms role personas into comprehensive "Beast Mode" chatmodes that provide AI agents with detailed operational guidelines, autonomous workflows, and success metrics. This feature enhances the persona system by creating agent-specific formats that maximize each AI platform's capabilities.
+
+### How Beast Mode Works
+
+1. **Persona Selection**: During `specx init`, users select personas
+2. **Transformation**: Selected personas are transformed into Beast Mode chatmodes
+3. **Generation**: Agent-specific chatmode files are created
+4. **Activation**: Users can activate chatmodes in their AI agent
+
+### Chatmode Formats by Agent
+
+#### GitHub Copilot (.chatmode.md)
+```yaml
+---
+description: "Business Analyst (BA) — Transform requirements into testable features"
+tools: ["file_editor", "terminal", "search", "debugger"]
+---
+# Full Beast Mode content with workflows, error handling, metrics
+```
+
+#### Claude/Cursor/Windsurf (Markdown)
+```yaml
+---
+role: business-analyst
+name: Business Analyst (BA)
+mode: beast
+---
+# System Role with autonomous operation guidelines
+```
+
+#### Gemini/Qwen (TOML)
+```toml
+[metadata]
+name = "Business Analyst"
+mode = "beast"
+
+[instructions]
+prompt = """Beast Mode instructions..."""
+```
+
+### Beast Mode Features
+
+1. **Autonomous Operation**
+   - Complete independence to finish deliverables
+   - Self-validation and quality checks
+   - Progress tracking and reporting
+
+2. **Comprehensive Workflows**
+   - Phase-by-phase execution guides
+   - Time estimates for each phase
+   - Validation checkpoints
+   - Integration points
+
+3. **Error Handling**
+   - Common failure scenarios
+   - Recovery procedures
+   - Escalation paths
+   - Safe defaults
+
+4. **Success Metrics**
+   - Trackable performance indicators
+   - Quality measures
+   - Completion validation
+   - Approval gates
+
+### Implementation Details
+
+The Beast Mode system includes:
+
+- **Templates**: Located in `templates/chatmodes/`
+  - `beast-mode-copilot.md`
+  - `beast-mode-markdown.md`
+  - `beast-mode-toml.toml`
+
+- **Transformation Function**: `generate_beast_mode_chatmodes()`
+  - Loads persona definitions
+  - Applies Beast Mode enhancements
+  - Generates agent-specific formats
+
+- **Configuration**: Added to `CHATMODE_CONFIG` in `__init__.py`
+
+### Testing Beast Mode
+
+1. **Generation**: Verify chatmode files are created correctly
+2. **Format**: Ensure agent-specific formats are valid
+3. **Content**: Check all template variables are replaced
+4. **Activation**: Test chatmode loading in each agent
+5. **Execution**: Validate Beast Mode workflows
+
+### Customization
+
+Users can customize Beast Mode chatmodes:
+
+1. **Template Level**: Modify templates in `templates/chatmodes/`
+2. **Persona Level**: Edit generated files in agent directories
+3. **Project Level**: Add project-specific guidelines directly to persona files
+
+### Advanced Features (Phase 4)
+
+The Beast Mode system now includes:
+
+1. **Dynamic Persona Switching**
+   - CLI commands: `specx persona switch`, `status`, `regenerate`
+   - Context preservation between switches
+   - Automatic session tracking
+
+2. **Agent Context Integration**
+   - Creates `CURRENT_PERSONA.md` files in agent directories
+   - AI agents can automatically detect active persona
+   - Shows instructions for referencing persona files
+
+3. **Session Management**
+   - Tracks current persona state
+   - Maintains session history
+   - Records artifacts and phase progression
+
 ## Future Considerations
 
 When adding new agents:
